@@ -14,8 +14,6 @@ package com.inter3i.sun.persistence.dataimport;
 import com.inter3i.sun.persistence.Entity;
 import lombok.Data;
 
-import java.util.List;
-
 @Data
 public class CommonData extends Entity {
     public static final int IMPORTSTATUS_NO_IMPORT = 0;

@@ -165,7 +165,7 @@ public class ImportDataAdapter {
 
                             //判断处理的批次数是否达到最大批次 达到最大批次则调用solr进行flush to desk 操作
                             if (batchApdNum >= serverConfig.getImportNumPerFlush()) {
-                                handleFlushAndUpadateStatus(docIds, allStatus, dbDataCollection);//更改状态
+                                handleFlushAndUpadateStatus(docIds, allStatus, dbDataCollection);
 
                                 // reset the docIds and the status
                                 Arrays.fill(docIds, null);
