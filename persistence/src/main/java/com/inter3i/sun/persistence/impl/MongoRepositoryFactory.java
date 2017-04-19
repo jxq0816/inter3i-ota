@@ -10,6 +10,7 @@
 package com.inter3i.sun.persistence.impl;
 
 import com.inter3i.sun.persistence.Entity;
+import com.inter3i.sun.persistence.Repository;
 import com.inter3i.sun.persistence.RepositoryFactory;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
@@ -23,6 +24,7 @@ import org.springframework.data.mongodb.core.convert.DefaultDbRefResolver;
 import org.springframework.data.mongodb.core.convert.DefaultMongoTypeMapper;
 import org.springframework.data.mongodb.core.convert.MappingMongoConverter;
 import org.springframework.data.mongodb.core.mapping.MongoMappingContext;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.util.Assert;
 
 public class MongoRepositoryFactory extends RepositoryFactory {

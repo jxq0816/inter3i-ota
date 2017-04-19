@@ -14,11 +14,9 @@ package com.inter3i.sun.api.ota.v1.job;
 import com.inter3i.sun.api.ota.v1.config.IMongoDocConverter;
 import com.inter3i.sun.api.ota.v1.config.ImportDataConfig;
 import com.inter3i.sun.api.ota.v1.config.MongoDBServerConfig;
-import com.inter3i.sun.api.ota.v1.job.schedule.ImportDataJob;
 import com.inter3i.sun.api.ota.v1.net.HttpUtils;
 import com.inter3i.sun.api.ota.v1.util.MongoUtils;
 import com.inter3i.sun.api.ota.v1.util.ValidateUtils;
-import com.inter3i.sun.persistence.RepositoryFactory;
 import com.inter3i.sun.persistence.dataimport.CommonData;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
@@ -167,7 +165,7 @@ public class ImportDataAdapter {
 
                             //判断处理的批次数是否达到最大批次 达到最大批次则调用solr进行flush to desk 操作
                             if (batchApdNum >= serverConfig.getImportNumPerFlush()) {
-                                handleFlushAndUpadateStatus(docIds, allStatus, dbDataCollection);
+                                handleFlushAndUpadateStatus(docIds, allStatus, dbDataCollection);//更改状态
 
                                 // reset the docIds and the status
                                 Arrays.fill(docIds, null);

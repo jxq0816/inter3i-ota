@@ -13,9 +13,6 @@ package com.inter3i.sun.api.ota.v1.config;
 
 import com.inter3i.sun.api.ota.v1.net.HttpUtils;
 import com.inter3i.sun.api.ota.v1.util.ValidateUtils;
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PropertiesLoaderUtils;
@@ -106,7 +103,7 @@ public class MongoDBServerConfig {
         return key.substring(key.indexOf("[") + 1, key.length() - 1);
     }
 
-    private static String importPath = "/sysadmin/model/cacheweibo.php?type=remotecommtask_commit&isSegmented=true";
+    private static String importPath = "/data/store?cacheName=cache02";
     private static String flushPath = "/sysadmin/model/cachemanager.php?type=no_doc_update_commit";
     private static String supplyPath = "/sysadmin/model/cacheweibo.php?type=supply_ori_id";
 
