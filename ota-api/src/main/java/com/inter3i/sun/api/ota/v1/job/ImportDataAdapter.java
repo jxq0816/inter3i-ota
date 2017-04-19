@@ -191,7 +191,7 @@ public class ImportDataAdapter {
                         Arrays.fill(allStatus, CommonData.IMPORTSTATUS_IMPORT_SUCCESS);
                     }
                     //执行 更新文章的 docId/father_guid/retweeted_guid等原创信息
-                    handleNedSupplyDocs();
+                    //handleNedSupplyDocs();
 
                     //增加处理完成标签
                     isHandleDone = true;
@@ -206,7 +206,7 @@ public class ImportDataAdapter {
                             Arrays.fill(docIds, null);
                             Arrays.fill(allStatus, CommonData.IMPORTSTATUS_IMPORT_SUCCESS);
                             //执行 更新文章的 docId/father_guid/retweeted_guid等原创信息
-                            handleNedSupplyDocs();
+                            //handleNedSupplyDocs();
                         }
                     } catch (Exception e1) {
                         e1.printStackTrace();
@@ -355,7 +355,7 @@ public class ImportDataAdapter {
             }
 
             //获取需要处理的 补充文章
-            handleNedSupplyDocs(jobj);
+            //handleNedSupplyDocs(jobj);
         } else {
             //提交数据失败 php中处理可能有异常
             logger.info("Job:[ImportDataJob] --+-handleRespData for the :[" + start + " TO " + end + "] doc --+- import batch doc has error! ErrorMsg:[" + jobj.get("error") + "].");
@@ -369,7 +369,7 @@ public class ImportDataAdapter {
             }
 
             //获取需要处理的 补充文章
-            handleNedSupplyDocs(jobj);
+            //handleNedSupplyDocs(jobj);
         }
     }
 
