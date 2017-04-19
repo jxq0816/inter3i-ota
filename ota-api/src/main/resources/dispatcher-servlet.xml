@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:task="http://www.springframework.org/schema/task"
+       xmlns:mvc="http://www.springframework.org/schema/mvc" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="
+        http://www.springframework.org/schema/beans     
+        http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context-4.0.xsd
+        http://www.springframework.org/schema/mvc
+        http://www.springframework.org/schema/mvc/spring-mvc-4.0.xsd
+        http://www.springframework.org/schema/task
+        http://www.springframework.org/schema/task/spring-task-3.0.xsd
+        ">
+
+    <bean class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter">
+        <property name="messageConverters">
+            <list>
+                <bean class="org.springframework.http.converter.json.GsonHttpMessageConverter"/>
+                <bean class="org.springframework.http.converter.ByteArrayHttpMessageConverter"/>
+                <bean class="org.springframework.http.converter.StringHttpMessageConverter"/>
+            </list>
+        </property>
+    </bean>
+
+    <context:component-scan base-package="com.inter3i.sun.api.ota.v1"/>
+
+    <!-- 使Spring关注Annotation -->
+    <context:annotation-config/>
+    <!-- 使用annotation 自动注册bean,并检查@Required,@Autowired的属性已被注入 -->
+    <mvc:annotation-driven/>
+
+
+    <!-- 开启这个配置，spring才能识别@Scheduled注解-->
+    <task:annotation-driven scheduler="sgScheduler" executor="sgExecutor" mode="proxy"/>
+    <task:scheduled-tasks scheduler="sgScheduler">
+        <!-- ***************************************** 数据入库定时任务 ***************************************** -->
+        <!-- 8081端口 -->
+        <task:scheduled ref="importJob" method="importDoc2SolrFromCache1" cron="0 0 0,1,2,3,4,5,21,22,23 * * ?"/>
+
+        <!-- 8071端口  -->
+        <!--<task:scheduled ref="importJob" method="importDoc2SolrFromCache2" cron="0 0 0,1,2,3,4,5,21,22,23 * * ?"/>-->
+        <task:scheduled ref="importJob" method="importDoc2SolrFromCache2" cron="1 * * * * ?"/>
+
+
+        <!--7011端口 -->
+        <task:scheduled ref="importJob" method="importDoc2SolrFromCache3" cron="0 0 0,1,2,3,4,5,21,22,23 * * ?"/>
+
+        <!-- 7021端口 -->
+        <task:scheduled ref="importJob" method="importDoc2SolrFromCache4" cron="0 0 0,1,2,3,4,5,21,22,23 * * ?"/>
+        <!-- ***************************************** 数据入库定时任务 *****************************************-->
+
+        <!--***************************************** 分词定时任务 *****************************************-->
+        <!--8081端口-->
+        <!--<task:scheduled ref="segmenteJob" method="segmentDocs4Cache1" cron="1 * * * * ?"/>-->
+        <task:scheduled ref="segmenteJob" method="segmentDocs4Cache1" cron="0 0,20,40 * * * ?"/>
+
+        <!-- 8071端口 -->
+        <!--<task:scheduled ref="segmenteJob" method="segmentDocs4Cache2" cron="0 5,25,45 * * * ?"/>-->
+        <task:scheduled ref="segmenteJob" method="segmentDocs4Cache2" cron="1 * * * * ?"/>
+
+
+        <!-- 7011端口 -->
+        <task:scheduled ref="segmenteJob" method="segmentDocs4Cache3" cron="0 10,30,50 * * * ?"/>
+
+        <!-- 7021端口 -->
+        <task:scheduled ref="segmenteJob" method="segmentDocs4Cache4" cron="0 15,35,55 * * * ?"/>
+        <!-- ***************************************** 分词定时任务 ***************************************** -->
+
+
+        <!-- ***************************************** 测试类 ***************************************** -->
+        <!--<task:scheduled ref="importJobTest" method="segmentDocs4CacheTest" cron="1 * * * * ?"/>-->
+        <!-- ***************************************** 测试类 ***************************************** -->
+    </task:scheduled-tasks>
+    <task:scheduler id="sgScheduler" pool-size="10"/>
+    <task:executor id="sgExecutor" pool-size="5"/>
+
+</beans>
