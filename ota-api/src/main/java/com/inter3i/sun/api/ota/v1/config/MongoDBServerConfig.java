@@ -89,6 +89,18 @@ public class MongoDBServerConfig {
                     } else if (key.startsWith("di.cacheSplTables[")) {
                         tmp.add4CacheSplTables(getKeyIn(key), (String) props.get(key));
                     }
+
+//                    di.datastorage.ip=127.0.0.1
+//                    di.datastorage.port=8081
+//                    di.datastorage.flushPath=/data/flush
+
+                    else if ("di.datastorage.ip".equals(key)) {
+                        tmp.dataStorageServerIp = (String) props.get(key);
+                    }else if("di.datastorage.port".equals(key)){
+                        tmp.dataStorageServerPort = Integer.valueOf((String) props.get(key));
+                    }else if("di.datastorage.flushPath".equals(key)){
+                        tmp.dataStorageSolrFlushPath= (String) props.get(key);
+                    }
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -122,6 +134,10 @@ public class MongoDBServerConfig {
     private int docNumPerImport;
     private int importNumPerFlush;
     private Map<String, Integer> cachePortMap = new HashMap<>(4);
+
+    private String dataStorageServerIp;
+    private int dataStorageServerPort;
+    private String dataStorageSolrFlushPath;
 
 
     public String getDbName() {
@@ -298,6 +314,13 @@ public class MongoDBServerConfig {
     public String getFlushURL(final String serverCacheName) {
         validateCacheName(serverCacheName);
         return HttpUtils.HTTP_PROTOCAL_PREFIX + this.webServerIp + ":" + cachePortMap.get(serverCacheName) + flushPath;
+    }
+
+    public String getFlushURL4DataStorege(final String serverCacheName) {
+        if (ValidateUtils.isNullOrEmpt(this.cacheDataTables) || !cacheDataTables.containsKey(serverCacheName)) {
+            throw new RuntimeException("cache name not exist! CacheName:["+serverCacheName+"].");
+        }
+        return HttpUtils.HTTP_PROTOCAL_PREFIX + this.dataStorageServerIp + ":" + dataStorageServerPort + dataStorageSolrFlushPath+"?cacheName="+serverCacheName;
     }
 
     public String getSupplyIdUrl(final String serverCacheName) {

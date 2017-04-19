@@ -543,7 +543,7 @@ public class ImportDataAdapter {
 
 
     private void flushSolrData() throws JSONException {
-        String flushDeskURL = this.serverConfig.getFlushURL(this.cacheName);
+        String flushDeskURL = this.serverConfig.getFlushURL4DataStorege(this.cacheName);
         String segResult = HttpUtils.executeGet("utf8", flushDeskURL, 300 * 1000);
         if (null == segResult || segResult.length() == 0) {
             throw new RuntimeException(
