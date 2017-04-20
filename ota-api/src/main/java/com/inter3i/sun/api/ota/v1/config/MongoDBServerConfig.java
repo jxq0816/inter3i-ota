@@ -45,11 +45,6 @@ public class MongoDBServerConfig {
                 tmp = new MongoDBServerConfig();
                 Resource resource = new ClassPathResource("/importdata.properties");
                 Properties props = PropertiesLoaderUtils.loadProperties(resource);
-
-                /*di.dbName=3idata
-                di.mongoDBIp=192.168.0.20
-                di.mongoDBPort=40000*/
-                /*String dbName = (String) props.get("di.dbName");*/
                 Iterator it = props.keySet().iterator();
                 String key = null;
                 while (it.hasNext()) {
@@ -88,17 +83,11 @@ public class MongoDBServerConfig {
                         tmp.add4CacheDataTables(getKeyIn(key), (String) props.get(key));
                     } else if (key.startsWith("di.cacheSplTables[")) {
                         tmp.add4CacheSplTables(getKeyIn(key), (String) props.get(key));
-                    }
-
-//                    di.datastorage.ip=127.0.0.1
-//                    di.datastorage.port=8081
-//                    di.datastorage.flushPath=/data/flush
-
-                    else if ("di.datastorage.ip".equals(key)) {
+                    } else if ("di.dataStorage.ip".equals(key)) {
                         tmp.dataStorageServerIp = (String) props.get(key);
-                    }else if("di.datastorage.port".equals(key)){
+                    }else if("di.dataStorage.port".equals(key)){
                         tmp.dataStorageServerPort = Integer.valueOf((String) props.get(key));
-                    }else if("di.datastorage.flushPath".equals(key)){
+                    }else if("di.dataStorage.flushPath".equals(key)){
                         tmp.dataStorageSolrFlushPath= (String) props.get(key);
                     }
                 }
@@ -115,9 +104,9 @@ public class MongoDBServerConfig {
         return key.substring(key.indexOf("[") + 1, key.length() - 1);
     }
 
-    private static String importPath = "/data/store?cacheName=cache02";
-    private static String flushPath = "/sysadmin/model/cachemanager.php?type=no_doc_update_commit";
-    private static String supplyPath = "/sysadmin/model/cacheweibo.php?type=supply_ori_id";
+    private static String importPath;
+    private static String flushPath;
+    private static String supplyPath;
 
     private String dbName;
     private String mongoDBIp;
@@ -308,13 +297,13 @@ public class MongoDBServerConfig {
      */
     public String getDataImportUrl(final String serverCacheName) {
         validateCacheName(serverCacheName);
-        return HttpUtils.HTTP_PROTOCAL_PREFIX + this.webServerIp + ":" + cachePortMap.get(serverCacheName) + importPath;
+        return HttpUtils.HTTP_PROTOCAL_PREFIX + this.dataStorageServerIp + ":" + this.dataStorageServerPort + importPath;
     }
 
-    public String getFlushURL(final String serverCacheName) {
+  /*  public String getFlushURL(final String serverCacheName) {
         validateCacheName(serverCacheName);
         return HttpUtils.HTTP_PROTOCAL_PREFIX + this.webServerIp + ":" + cachePortMap.get(serverCacheName) + flushPath;
-    }
+    }*/
 
     public String getFlushURL4DataStorege(final String serverCacheName) {
         if (ValidateUtils.isNullOrEmpt(this.cacheDataTables) || !cacheDataTables.containsKey(serverCacheName)) {
