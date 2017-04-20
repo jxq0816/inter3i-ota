@@ -5,7 +5,7 @@
         <!--<Property name="logdir">${sys:catalina.home}</Property>-->
         <!--<Property name="logdir">D:/tmp</Property>-->
         <!--<Property name="logdir">/usr/local/apache-tomcat-8.0.30/logs</Property>-->
-        <Property name="logdir">/data/tomcat8/logs</Property>
+        <Property name="logdir">/data/tomcat8/logs/otaapi</Property>
     </Properties>
     <Appenders>
         <Console name="CONSOLE" target="SYSTEM_OUT">
