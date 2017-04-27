@@ -11,7 +11,10 @@ package com.inter3i.sun.api.ota.v1;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.context.embedded.ConfigurableEmbeddedServletContainer;
+import org.springframework.boot.context.embedded.EmbeddedServletContainerCustomizer;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.web.support.SpringBootServletInitializer;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.ImportResource;
 
@@ -19,9 +22,13 @@ import org.springframework.context.annotation.ImportResource;
 @EnableAutoConfiguration
 @EnableConfigurationProperties
 @ImportResource("classpath:dispatcher-servlet.xml")
-public class Application {
+public class Application extends SpringBootServletInitializer implements EmbeddedServletContainerCustomizer {
 
     public static void main(String[] args) throws Exception {
         SpringApplication.run(Application.class, args);
+    }
+    @Override
+    public void customize(ConfigurableEmbeddedServletContainer container) {
+        container.setPort(8081);
     }
 }
