@@ -58,13 +58,41 @@ public class MongoUtils {
         return document;
     }
 
-    public static void updateStatusById(MongoCollection<Document> coll, Object id, int status) {
+    /**
+     *
+     * @param coll
+     * @param id
+     * @param status
+     * @param createTime 创建时间 by jiangxingqi
+     * @param updateTime 更新时间 by jiangxingqi
+     */
+    public static void updateStatusAndCreateTimeById(MongoCollection<Document> coll, Object id, int status,Long createTime,Long updateTime) {
         if (null == id) {
             throw new RuntimeException("updateStatusById for mongo exceptino:[_id is null!]");
         }
         Bson filter = Filters.eq("_id", id);
         Document newdoc = new Document();
         newdoc.put("importStatus", status);
+        newdoc.put("createTime", createTime);
+        newdoc.put("updateTime", updateTime);
+        coll.updateOne(filter, new Document("$set", newdoc));
+    }
+
+    /**
+     *
+     * @param coll
+     * @param id
+     * @param status
+     * @param updateTime by jiangxingqi
+     */
+    public static void updateStatusAndUpdateTimeById(MongoCollection<Document> coll, Object id, int status,Long updateTime) {
+        if (null == id) {
+            throw new RuntimeException("updateStatusById for mongo exceptino:[_id is null!]");
+        }
+        Bson filter = Filters.eq("_id", id);
+        Document newdoc = new Document();
+        newdoc.put("importStatus", status);
+        newdoc.put("updateTime", updateTime);
         coll.updateOne(filter, new Document("$set", newdoc));
     }
 

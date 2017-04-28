@@ -29,10 +29,7 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
+import java.util.*;
 
 public class ImportDataAdapter {
     private static final Logger logger = LoggerFactory.getLogger(ImportDataAdapter.class);
@@ -106,6 +103,7 @@ public class ImportDataAdapter {
 
         int maxDocNum = serverConfig.getDocNumPerImport() * serverConfig.getImportNumPerFlush();
         Object[] docIds = new Object[maxDocNum];
+        Long[] createTimes = new Long[maxDocNum];
         Integer[] allStatus = new Integer[maxDocNum];
 
         //批次、批量信息统计
@@ -154,7 +152,8 @@ public class ImportDataAdapter {
                             //累计的批次数
                             statistic.batchSequence++;
                             //批量入库
-                            importData2SolrDerect(batchDoc, dbDataCollection, offSet, docIds, allStatus, statistic);
+                            //20170428 创建时间 by jiangxingqi
+                            importData2SolrDerect(batchDoc, dbDataCollection, offSet, docIds,createTimes, allStatus, statistic);
                             Arrays.fill(batchDoc, null);
 
                             //满一个小批次，将小批次里面的文档编号置零
@@ -165,7 +164,8 @@ public class ImportDataAdapter {
 
                             //判断处理的批次数是否达到最大批次 达到最大批次则调用solr进行flush to desk 操作
                             if (batchApdNum >= serverConfig.getImportNumPerFlush()) {
-                                handleFlushAndUpadateStatus(docIds, allStatus, dbDataCollection);
+                                //20170428 创建时间 by jiangxingqi
+                                handleFlushAndUpadateStatus(docIds,createTimes,allStatus, dbDataCollection);
 
                                 // reset the docIds and the status
                                 Arrays.fill(docIds, null);
@@ -181,11 +181,13 @@ public class ImportDataAdapter {
                     if (batchDoc[0] != null) {//10001条时候
                         //累计的批次数
                         statistic.batchSequence++;
-                        importData2SolrDerect(batchDoc, dbDataCollection, offSet, docIds, allStatus, statistic);
+                        //20170428 创建时间 by jiangxingqi
+                        importData2SolrDerect(batchDoc, dbDataCollection, offSet, docIds,createTimes, allStatus, statistic);
                     }
 
                     if (docIds[0] != null) { //当不够10000时候，1000个文档时候，import10次，但是没有修改状态
-                        handleFlushAndUpadateStatus(docIds, allStatus, dbDataCollection);
+                        //20170428 创建时间 by jiangxingqi
+                        handleFlushAndUpadateStatus(docIds, createTimes,allStatus, dbDataCollection);
                         // reset the docIds and the status
                         Arrays.fill(docIds, null);
                         Arrays.fill(allStatus, CommonData.IMPORTSTATUS_IMPORT_SUCCESS);
@@ -201,7 +203,8 @@ public class ImportDataAdapter {
                     try {
                         //TODO 与奥异常时候将已经处理的数据刷新
                         if (docIds[0] != null) {
-                            handleFlushAndUpadateStatus(docIds, allStatus, dbDataCollection);
+                            //20170428 创建时间 by jiangxingqi
+                            handleFlushAndUpadateStatus(docIds,createTimes,allStatus, dbDataCollection);
                             // reset the docIds and the status
                             Arrays.fill(docIds, null);
                             Arrays.fill(allStatus, CommonData.IMPORTSTATUS_IMPORT_SUCCESS);
@@ -267,8 +270,18 @@ public class ImportDataAdapter {
         }
     }
 
-
-    private void importData2SolrDerect(final Document[] taskDatas, final MongoCollection dbCollection, int offset, final Object[] docIds, final Integer[] allStatus, final BathStatistic statistic) throws JSONException {
+    /**
+     *
+     * @param taskDatas
+     * @param dbCollection
+     * @param offset
+     * @param docIds
+     * @param createTimes 入库时间 by jiangxingqi
+     * @param allStatus
+     * @param statistic
+     * @throws JSONException
+     */
+    private void importData2SolrDerect(final Document[] taskDatas, final MongoCollection dbCollection, int offset, final Object[] docIds,final Long[] createTimes, final Integer[] allStatus, final BathStatistic statistic) throws JSONException {
         int handleNum = 0;
         long startTime = System.currentTimeMillis();
 
@@ -310,7 +323,8 @@ public class ImportDataAdapter {
             handleRespData(segResultStr, status, start, end);
 
             //根据偏移量 设置 文档状态
-            setStatusByoffset(taskDatas, docIds, status, allStatus, dbCollection, offset);
+            //20170428 创建时间 by jiangxingqi
+            setStatusByoffset(taskDatas,docIds,createTimes,status,allStatus, dbCollection, offset);
         } catch (Exception e) {
             e.printStackTrace();
             logger.error("Job:[ImportDataJob] --+-importData2SolrDerect by batch, handle the :[" + start + " TO " + end + "] doc to solr exception! batchNum:[" + serverConfig.getDocNumPerImport() + "] ErrorMsg:[" + e.getMessage() + "].", e);
@@ -395,7 +409,17 @@ public class ImportDataAdapter {
         }
     }
 
-    private void setStatusByoffset(final Document[] docs, final Object[] docIds, Integer[] status, Integer[] allStatus, final MongoCollection dbCollection, int offset) {
+    /**
+     *
+     * @param docs
+     * @param docIds
+     * @param createTimes 获取入库时间
+     * @param status
+     * @param allStatus
+     * @param dbCollection
+     * @param offset
+     */
+    private void setStatusByoffset(final Document[] docs,final Object[] docIds,final Object[] createTimes, Integer[] status, Integer[] allStatus, final MongoCollection dbCollection, int offset) {
         Document doc = null;
         for (int t = 0; t < docs.length; t++) {
             doc = docs[t];
@@ -404,17 +428,25 @@ public class ImportDataAdapter {
             }
             //doc.put("importStatus", status[t]);
             docIds[offset + t] = doc.get(MongoUtils.PRIM_KEY_ID);
+            createTimes[offset + t] = doc.get("createTime");
             allStatus[offset + t] = status[t];
         }
     }
 
-
-    private void handleFlushAndUpadateStatus(Object[] docIds, Integer[] allStatus, MongoCollection dbCollection) throws JSONException {
+    /**
+     *
+     * @param docIds
+     * @param createTime  创建时间 by jiangxingqi
+     * @param allStatus
+     * @param dbCollection
+     * @throws JSONException
+     */
+    private void handleFlushAndUpadateStatus(Object[] docIds, Long[] createTime, Integer[] allStatus, MongoCollection dbCollection) throws JSONException {
         //1.flush solr to desk
         flushSolrData();
 
         //2.update all document status
-        updateStatusById(docIds, allStatus, dbCollection);
+        updateStatusById(docIds,createTime,allStatus,dbCollection);
     }
 
 
@@ -560,14 +592,28 @@ public class ImportDataAdapter {
         }
     }
 
-    private void updateStatusById(Object[] docIds, Integer[] allStatus, MongoCollection dbCollection) {
+    /**
+     *
+     * @param docIds
+     * @param createTime 20170428 创建时间 by jiangxingqi
+     * @param allStatus
+     * @param dbCollection
+     */
+    private void updateStatusById(Object[] docIds, Long[] createTime,Integer[] allStatus,MongoCollection dbCollection) {
         Object id = null;
         for (int t = 0; t < docIds.length; t++) {
             id = docIds[t];
             if (ValidateUtils.isNullOrEmpt(id)) {
                 break;
             }
-            MongoUtils.updateStatusById(dbCollection, id, allStatus[t]);
+            Long create=createTime[t];
+            Long update=new Date().getTime();
+            if(create==null) {
+                create = new Date().getTime();
+                MongoUtils.updateStatusAndCreateTimeById(dbCollection, id, allStatus[t],create,update);
+            }else{
+                MongoUtils.updateStatusAndUpdateTimeById(dbCollection, id, allStatus[t],update);
+            }
         }
     }
 
