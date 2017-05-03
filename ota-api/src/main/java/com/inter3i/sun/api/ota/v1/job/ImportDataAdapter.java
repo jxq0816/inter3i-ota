@@ -124,7 +124,7 @@ public class ImportDataAdapter {
                     //查询出所有的没有入库以及分词成功的文章
                     Bson fileter1 = Filters.eq("importStatus", CommonData.IMPORTSTATUS_NO_IMPORT); //没有入库
                     Bson fileter2 = Filters.eq("segmentedStatus", CommonData.SEGMENTE_SATUS_SUCCESS);//分词成功
-                    Bson conds = Filters.and(fileter2);
+                    Bson conds = Filters.and(fileter1,fileter2);
                     //没有分词
                     FindIterable iterable = dbDataCollection.find(conds);
 
@@ -188,8 +188,9 @@ public class ImportDataAdapter {
                     if (docIds[0] != null) { //当不够10000时候，1000个文档时候，import10次，但是没有修改状态
                         //20170428 创建时间 by jiangxingqi
                         handleFlushAndUpadateStatus(docIds, createTimes,allStatus, dbDataCollection);
-                        // reset the docIds and the status
+                        // reset the docIds and the status and createTimes
                         Arrays.fill(docIds, null);
+                        Arrays.fill(createTimes, null);//入库时间重置 by jiangxingqi 20170503
                         Arrays.fill(allStatus, CommonData.IMPORTSTATUS_IMPORT_SUCCESS);
                     }
                     //执行 更新文章的 docId/father_guid/retweeted_guid等原创信息
