@@ -104,7 +104,7 @@ public class ImportDataAdapter {
         int maxDocNum = serverConfig.getDocNumPerImport() * serverConfig.getImportNumPerFlush();
         Object[] docIds = new Object[maxDocNum];
         long[] createTimes = new long[maxDocNum];
-        Integer[] allStatus = new Integer[maxDocNum];
+        int[] allStatus = new int[maxDocNum];
 
         //批次、批量信息统计
         BathStatistic statistic = null;
@@ -277,7 +277,7 @@ public class ImportDataAdapter {
      * @param statistic
      * @throws JSONException
      */
-    private void importData2SolrDerect(final Document[] taskDatas, final MongoCollection dbCollection, int offset, final Object[] docIds,final long[] createTimes, final Integer[] allStatus, final BathStatistic statistic) throws JSONException {
+    private void importData2SolrDerect(final Document[] taskDatas, final MongoCollection dbCollection, int offset, final Object[] docIds,final long[] createTimes, final int[] allStatus, final BathStatistic statistic) throws JSONException {
         int handleNum = 0;
         long startTime = System.currentTimeMillis();
 
@@ -294,7 +294,7 @@ public class ImportDataAdapter {
             JSONObject reqDoTmp = null;
             Document doc = null;
 
-            Integer[] status = new Integer[taskDatas.length];
+            int[] status = new int[taskDatas.length];
             //默认成功
             Arrays.fill(status, 1);
 
@@ -331,14 +331,14 @@ public class ImportDataAdapter {
         }
     }
 
-    private String sendBatchDoc(final JSONArray reqDatas, Integer[] status) throws JSONException {
+    private String sendBatchDoc(final JSONArray reqDatas, int[] status) throws JSONException {
         //发送solr入库请求
         String url=this.serverConfig.getDataImportUrl(this.cacheName);
         String segResult = HttpUtils.executePost(reqDatas.toString(), "utf8",url , 3000 * 1000, HttpUtils.CONTENT_TYPE_TEXT_XML);
         return segResult;
     }
 
-    private void handleRespData(String respData, Integer[] errorDocs, int start, int end) throws JSONException {
+    private void handleRespData(String respData, int[] errorDocs, int start, int end) throws JSONException {
         logger.info("Job:[ImportDataJob] --+-handleRespData for the :[" + start + " TO " + end + "] doc...");
         JSONObject jobj;
         jobj = new JSONObject(respData);
@@ -415,7 +415,7 @@ public class ImportDataAdapter {
      * @param dbCollection
      * @param offset
      */
-    private void setStatusByoffset(final Document[] docs,final Object[] docIds,final long[] createTimes, Integer[] status, Integer[] allStatus, final MongoCollection dbCollection, int offset) {
+    private void setStatusByoffset(final Document[] docs,final Object[] docIds,final long[] createTimes, int[] status, int[] allStatus, final MongoCollection dbCollection, int offset) {
         Document doc = null;
         for (int t = 0; t < docs.length; t++) {
             doc = docs[t];
@@ -441,7 +441,7 @@ public class ImportDataAdapter {
      * @param dbCollection
      * @throws JSONException
      */
-    private void handleFlushAndUpadateStatus(Object[] docIds, long[] createTime, Integer[] allStatus, MongoCollection dbCollection) throws JSONException {
+    private void handleFlushAndUpadateStatus(Object[] docIds, long[] createTime, int[] allStatus, MongoCollection dbCollection) throws JSONException {
         //1.flush solr to desk
         flushSolrData();
 
@@ -599,8 +599,8 @@ public class ImportDataAdapter {
      * @param allStatus
      * @param dbCollection
      */
-    private void updateStatusById(Object[] docIds, long[] createTime,Integer[] allStatus,MongoCollection dbCollection) {
-        Object id = null;
+    private void updateStatusById(Object[] docIds, long[] createTime,int[] allStatus,MongoCollection dbCollection) {
+        Object id;
         for (int t = 0; t < docIds.length; t++) {
             id = docIds[t];
             if (ValidateUtils.isNullOrEmpt(id)) {
@@ -616,7 +616,14 @@ public class ImportDataAdapter {
             }
         }
     }
-    private void resetParam(Object[] docIds, long[] createTimes,Integer[] allStatus){
+
+    /**
+     * 重置参数列表
+     * @param docIds
+     * @param createTimes
+     * @param allStatus
+     */
+    private void resetParam(Object[] docIds, long[] createTimes,int[] allStatus){
         Arrays.fill(docIds, null);
         Arrays.fill(createTimes, 0);//入库时间重置 by jiangxingqi 20170503
         Arrays.fill(allStatus, CommonData.IMPORTSTATUS_IMPORT_SUCCESS);
