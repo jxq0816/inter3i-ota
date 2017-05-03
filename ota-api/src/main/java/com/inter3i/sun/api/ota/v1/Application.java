@@ -24,11 +24,17 @@ import org.springframework.context.annotation.ImportResource;
 @ImportResource("classpath:dispatcher-servlet.xml")
 public class Application extends SpringBootServletInitializer implements EmbeddedServletContainerCustomizer {
 
+   /* @Override
+    protected SpringApplicationBuilder configure(SpringApplicationBuilder builder) {
+        return builder.sources(Application.class);
+    }*/
+
     public static void main(String[] args) throws Exception {
         SpringApplication.run(Application.class, args);
     }
+
     @Override
     public void customize(ConfigurableEmbeddedServletContainer container) {
-        container.setPort(8081);
+        container.setPort(7081);
     }
 }

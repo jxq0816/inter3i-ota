@@ -21,6 +21,7 @@ import com.inter3i.sun.persistence.dataimport.CommonData;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 @RestController("/DocCache")
@@ -99,11 +100,11 @@ public class CommonDataController {
             serverConfig.validateCacheName(cacheServerName);
 
             CommonData commonData = new CommonData();
-            /*commonData.setJsonDocStr(requestDataStr);
+            commonData.setJsonDocStr(requestDataStr);
             commonData.setImportStatus(CommonData.IMPORTSTATUS_NO_IMPORT);
             commonData.setSegmentedStatus(CommonData.SEGMENTE_SATUS_NO);
             commonData.setCacheDataTime(System.currentTimeMillis());
-*/
+
             if (OPERATE_TYPE_INSERT.equals(type)) {
                 commonDataService.savaCommonData(cacheServerName, commonData, serverConfig);
             } else {

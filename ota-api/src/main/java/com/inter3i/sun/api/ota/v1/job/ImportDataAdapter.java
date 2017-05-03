@@ -4,7 +4,7 @@
  * All rights reserved.
  *
  * Author: Administrator
- * Created: 2017/01/12
+ * Created: 2017/05/03
  * Description:
  *
  */
@@ -107,14 +107,14 @@ public class ImportDataAdapter {
         Integer[] allStatus = new Integer[maxDocNum];
 
         //批次、批量信息统计
-        ImportDataAdapter.BathStatistic statistic = null;
+        BathStatistic statistic = null;
         boolean isHandleDone = false;
 
         try {
             while (!isHandleDone) {
 
                 //第一次 或者从 游标超时异常冲开始恢复
-                statistic = new ImportDataAdapter.BathStatistic();
+                statistic = new BathStatistic();
                 try {
 //            dbCollection = RepositoryFactory.getMongoClient(ImportDataConfig.DB_NAME, ImportDataConfig.TABLE_NAME_COMMON, serverConfig.getMongoDBAdds(), serverConfig.getMongoDBPort());
 //            if (dbSupplyCollection == null) {
@@ -431,7 +431,11 @@ public class ImportDataAdapter {
             }
             //doc.put("importStatus", status[t]);
             docIds[offset + t] = doc.get(MongoUtils.PRIM_KEY_ID);
-            createTimes[offset + t] = (long)doc.get("createTime");
+
+            if(doc.get("createTime")!=null){
+                long createTime=(long) doc.get("createTime");
+                createTimes[offset + t] = createTime;
+            }
             allStatus[offset + t] = status[t];
         }
     }
@@ -579,7 +583,7 @@ public class ImportDataAdapter {
 
 
     private void flushSolrData() throws JSONException {
-        String flushDeskURL = this.serverConfig.getFlushURL4DataStorege(this.cacheName);
+        String flushDeskURL = this.serverConfig.getFlushURL(this.cacheName);
         String segResult = HttpUtils.executeGet("utf8", flushDeskURL, 300 * 1000);
         if (null == segResult || segResult.length() == 0) {
             throw new RuntimeException(

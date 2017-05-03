@@ -16,6 +16,7 @@ import com.inter3i.sun.persistence.impl.MongoRepository;
 import org.bson.types.ObjectId;
 import org.junit.Assert;
 import org.junit.Test;
+import org.springframework.data.mongodb.core.query.Query;
 
 import java.util.HashMap;
 import java.util.List;

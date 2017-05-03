@@ -3,8 +3,8 @@
  * Copyright (c) 2017, inter3i.com. All rights reserved.
  * All rights reserved.
  *
- * Author: wangchaochao
- * Created: 2017/01/12
+ * Author: Administrator
+ * Created: 2017/04/21
  * Description:
  *
  */
@@ -83,13 +83,15 @@ public class MongoDBServerConfig {
                         tmp.add4CacheDataTables(getKeyIn(key), (String) props.get(key));
                     } else if (key.startsWith("di.cacheSplTables[")) {
                         tmp.add4CacheSplTables(getKeyIn(key), (String) props.get(key));
-                    } else if ("di.dataStorage.ip".equals(key)) {
-                        tmp.dataStorageServerIp = (String) props.get(key);
-                    }else if("di.dataStorage.port".equals(key)){
-                        tmp.dataStorageServerPort = Integer.valueOf((String) props.get(key));
-                    }else if("di.dataStorage.flushPath".equals(key)){
-                        tmp.dataStorageSolrFlushPath= (String) props.get(key);
                     }
+
+//                    else if ("di.dataStorage.ip".equals(key)) {
+//                        tmp.dataStorageServerIp = (String) props.get(key);
+//                    } else if ("di.dataStorage.port".equals(key)) {
+//                        tmp.dataStorageServerPort = Integer.valueOf((String) props.get(key));
+//                    } else if ("di.dataStorage.flushPath".equals(key)) {
+//                        tmp.dataStorageSolrFlushPath = (String) props.get(key);
+//                    }
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -111,7 +113,7 @@ public class MongoDBServerConfig {
     private String dbName;
     private String mongoDBIp;
     private int mongoDBPort;
-    private Map<String, String> cacheTableMap = new HashMap<>(4);
+    private Map<String, String> cacheInfos = new HashMap<>(4);
 
     private String nlpServerIp;
     private int nlpServerPort;
@@ -124,9 +126,9 @@ public class MongoDBServerConfig {
     private int importNumPerFlush;
     private Map<String, Integer> cachePortMap = new HashMap<>(4);
 
-    private String dataStorageServerIp;
-    private int dataStorageServerPort;
-    private String dataStorageSolrFlushPath;
+//    private String dataStorageServerIp;
+//    private int dataStorageServerPort;
+//    private String dataStorageSolrFlushPath;
 
 
     public String getDbName() {
@@ -178,15 +180,15 @@ public class MongoDBServerConfig {
     }
 
     public Map<String, String> getCacheTableMap() {
-        return cacheTableMap;
+        return cacheDataTables;
     }
 
     public void setCacheTableMap(Map<String, String> cacheTableMap) {
-        this.cacheTableMap = cacheTableMap;
+        this.cacheDataTables = cacheTableMap;
     }
 
     public void add4CacheTableMap(String key, String value) {
-        cacheTableMap.put(key, value);
+        cacheDataTables.put(key, value);
     }
 
     public String getNlpServerIp() {
@@ -297,24 +299,27 @@ public class MongoDBServerConfig {
      */
     public String getDataImportUrl(final String serverCacheName) {
         validateCacheName(serverCacheName);
-        return HttpUtils.HTTP_PROTOCAL_PREFIX + this.dataStorageServerIp + ":" + this.dataStorageServerPort + importPath;
+        return HttpUtils.HTTP_PROTOCAL_PREFIX + this.webServerIp + ":" + this.cachePortMap.get(serverCacheName)
+                + this.importPath + "?cacheName=" + serverCacheName;
     }
 
-  /*  public String getFlushURL(final String serverCacheName) {
+    public String getFlushURL(final String serverCacheName) {
         validateCacheName(serverCacheName);
-        return HttpUtils.HTTP_PROTOCAL_PREFIX + this.webServerIp + ":" + cachePortMap.get(serverCacheName) + flushPath;
-    }*/
-
-    public String getFlushURL4DataStorege(final String serverCacheName) {
-        if (ValidateUtils.isNullOrEmpt(this.cacheDataTables) || !cacheDataTables.containsKey(serverCacheName)) {
-            throw new RuntimeException("cache name not exist! CacheName:["+serverCacheName+"].");
-        }
-        return HttpUtils.HTTP_PROTOCAL_PREFIX + this.dataStorageServerIp + ":" + dataStorageServerPort + dataStorageSolrFlushPath+"?cacheName="+serverCacheName;
+        return HttpUtils.HTTP_PROTOCAL_PREFIX + this.webServerIp + ":" + cachePortMap.get(serverCacheName)
+                + flushPath + "?cacheName=" + serverCacheName;
     }
+
+    //    public String getFlushURL4DataStorege(final String serverCacheName) {
+    //        if (ValidateUtils.isNullOrEmpt(this.cacheDataTables) || !cacheDataTables.containsKey(serverCacheName)) {
+    //            throw new RuntimeException("cache name not exist! CacheName:[" + serverCacheName + "].");
+    //        }
+    //        return HttpUtils.HTTP_PROTOCAL_PREFIX + this.dataStorageServerIp + ":" + dataStorageServerPort + dataStorageSolrFlushPath + "?cacheName=" + serverCacheName;
+    //    }
 
     public String getSupplyIdUrl(final String serverCacheName) {
-        validateCacheName(serverCacheName);
-        return HttpUtils.HTTP_PROTOCAL_PREFIX + this.webServerIp + ":" + cachePortMap.get(serverCacheName) + supplyPath;
+        //        validateCacheName(serverCacheName);
+        //        return HttpUtils.HTTP_PROTOCAL_PREFIX + this.webServerIp + ":" + cachePortMap.get(serverCacheName) + supplyPath;
+        return null;
     }
 
     public void validateCacheName(final String serverCacheName) {
