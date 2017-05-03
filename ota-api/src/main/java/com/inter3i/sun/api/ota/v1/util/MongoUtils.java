@@ -66,7 +66,7 @@ public class MongoUtils {
      * @param createTime 创建时间 by jiangxingqi
      * @param updateTime 更新时间 by jiangxingqi
      */
-    public static void updateStatusAndCreateTimeById(MongoCollection<Document> coll, Object id, int status,Long createTime,Long updateTime) {
+    public static void updateStatusAndCreateTimeById(MongoCollection<Document> coll, Object id, int status,long createTime,Long updateTime) {
         if (null == id) {
             throw new RuntimeException("updateStatusById for mongo exceptino:[_id is null!]");
         }
@@ -85,7 +85,7 @@ public class MongoUtils {
      * @param status
      * @param updateTime by jiangxingqi
      */
-    public static void updateStatusAndUpdateTimeById(MongoCollection<Document> coll, Object id, int status,Long updateTime) {
+    public static void updateStatusAndUpdateTimeById(MongoCollection<Document> coll, Object id, int status,long updateTime) {
         if (null == id) {
             throw new RuntimeException("updateStatusById for mongo exceptino:[_id is null!]");
         }

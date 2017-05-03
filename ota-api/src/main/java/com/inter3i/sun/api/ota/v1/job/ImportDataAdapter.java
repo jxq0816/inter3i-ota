@@ -103,7 +103,7 @@ public class ImportDataAdapter {
 
         int maxDocNum = serverConfig.getDocNumPerImport() * serverConfig.getImportNumPerFlush();
         Object[] docIds = new Object[maxDocNum];
-        Long[] createTimes = new Long[maxDocNum];
+        long[] createTimes = new long[maxDocNum];
         Integer[] allStatus = new Integer[maxDocNum];
 
         //批次、批量信息统计
@@ -169,6 +169,7 @@ public class ImportDataAdapter {
 
                                 // reset the docIds and the status
                                 Arrays.fill(docIds, null);
+                                Arrays.fill(createTimes, 0);//入库时间重置 by jiangxingqi 20170503
                                 Arrays.fill(allStatus, CommonData.IMPORTSTATUS_IMPORT_SUCCESS);
 
                                 //满一个大批次，将大批次里面的小批次编号置零
@@ -190,7 +191,7 @@ public class ImportDataAdapter {
                         handleFlushAndUpadateStatus(docIds, createTimes,allStatus, dbDataCollection);
                         // reset the docIds and the status and createTimes
                         Arrays.fill(docIds, null);
-                        Arrays.fill(createTimes, null);//入库时间重置 by jiangxingqi 20170503
+                        Arrays.fill(createTimes, 0);//入库时间重置 by jiangxingqi 20170503
                         Arrays.fill(allStatus, CommonData.IMPORTSTATUS_IMPORT_SUCCESS);
                     }
                     //执行 更新文章的 docId/father_guid/retweeted_guid等原创信息
@@ -208,6 +209,7 @@ public class ImportDataAdapter {
                             handleFlushAndUpadateStatus(docIds,createTimes,allStatus, dbDataCollection);
                             // reset the docIds and the status
                             Arrays.fill(docIds, null);
+                            Arrays.fill(createTimes, 0);//入库时间重置 by jiangxingqi 20170503
                             Arrays.fill(allStatus, CommonData.IMPORTSTATUS_IMPORT_SUCCESS);
                             //执行 更新文章的 docId/father_guid/retweeted_guid等原创信息
                             //handleNedSupplyDocs();
@@ -282,7 +284,7 @@ public class ImportDataAdapter {
      * @param statistic
      * @throws JSONException
      */
-    private void importData2SolrDerect(final Document[] taskDatas, final MongoCollection dbCollection, int offset, final Object[] docIds,final Long[] createTimes, final Integer[] allStatus, final BathStatistic statistic) throws JSONException {
+    private void importData2SolrDerect(final Document[] taskDatas, final MongoCollection dbCollection, int offset, final Object[] docIds,final long[] createTimes, final Integer[] allStatus, final BathStatistic statistic) throws JSONException {
         int handleNum = 0;
         long startTime = System.currentTimeMillis();
 
@@ -420,7 +422,7 @@ public class ImportDataAdapter {
      * @param dbCollection
      * @param offset
      */
-    private void setStatusByoffset(final Document[] docs,final Object[] docIds,final Object[] createTimes, Integer[] status, Integer[] allStatus, final MongoCollection dbCollection, int offset) {
+    private void setStatusByoffset(final Document[] docs,final Object[] docIds,final long[] createTimes, Integer[] status, Integer[] allStatus, final MongoCollection dbCollection, int offset) {
         Document doc = null;
         for (int t = 0; t < docs.length; t++) {
             doc = docs[t];
@@ -429,7 +431,7 @@ public class ImportDataAdapter {
             }
             //doc.put("importStatus", status[t]);
             docIds[offset + t] = doc.get(MongoUtils.PRIM_KEY_ID);
-            createTimes[offset + t] = doc.get("createTime");
+            createTimes[offset + t] = (long)doc.get("createTime");
             allStatus[offset + t] = status[t];
         }
     }
@@ -442,7 +444,7 @@ public class ImportDataAdapter {
      * @param dbCollection
      * @throws JSONException
      */
-    private void handleFlushAndUpadateStatus(Object[] docIds, Long[] createTime, Integer[] allStatus, MongoCollection dbCollection) throws JSONException {
+    private void handleFlushAndUpadateStatus(Object[] docIds, long[] createTime, Integer[] allStatus, MongoCollection dbCollection) throws JSONException {
         //1.flush solr to desk
         flushSolrData();
 
@@ -600,7 +602,7 @@ public class ImportDataAdapter {
      * @param allStatus
      * @param dbCollection
      */
-    private void updateStatusById(Object[] docIds, Long[] createTime,Integer[] allStatus,MongoCollection dbCollection) {
+    private void updateStatusById(Object[] docIds, long[] createTime,Integer[] allStatus,MongoCollection dbCollection) {
         Object id = null;
         for (int t = 0; t < docIds.length; t++) {
             id = docIds[t];
