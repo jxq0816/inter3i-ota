@@ -168,10 +168,7 @@ public class ImportDataAdapter {
                                 handleFlushAndUpadateStatus(docIds,createTimes,allStatus, dbDataCollection);
 
                                 // reset the docIds and the status
-                                Arrays.fill(docIds, null);
-                                Arrays.fill(createTimes, 0);//入库时间重置 by jiangxingqi 20170503
-                                Arrays.fill(allStatus, CommonData.IMPORTSTATUS_IMPORT_SUCCESS);
-
+                                resetParam(docIds,createTimes,allStatus);
                                 //满一个大批次，将大批次里面的小批次编号置零
                                 batchApdNum = 0;
                                 offSet = 0;
@@ -190,9 +187,7 @@ public class ImportDataAdapter {
                         //20170428 创建时间 by jiangxingqi
                         handleFlushAndUpadateStatus(docIds, createTimes,allStatus, dbDataCollection);
                         // reset the docIds and the status and createTimes
-                        Arrays.fill(docIds, null);
-                        Arrays.fill(createTimes, 0);//入库时间重置 by jiangxingqi 20170503
-                        Arrays.fill(allStatus, CommonData.IMPORTSTATUS_IMPORT_SUCCESS);
+                        resetParam(docIds,createTimes,allStatus);
                     }
                     //执行 更新文章的 docId/father_guid/retweeted_guid等原创信息
                     //handleNedSupplyDocs();
@@ -208,9 +203,7 @@ public class ImportDataAdapter {
                             //20170428 创建时间 by jiangxingqi
                             handleFlushAndUpadateStatus(docIds,createTimes,allStatus, dbDataCollection);
                             // reset the docIds and the status
-                            Arrays.fill(docIds, null);
-                            Arrays.fill(createTimes, 0);//入库时间重置 by jiangxingqi 20170503
-                            Arrays.fill(allStatus, CommonData.IMPORTSTATUS_IMPORT_SUCCESS);
+                            resetParam(docIds,createTimes,allStatus);
                             //执行 更新文章的 docId/father_guid/retweeted_guid等原创信息
                             //handleNedSupplyDocs();
                         }
@@ -613,9 +606,9 @@ public class ImportDataAdapter {
             if (ValidateUtils.isNullOrEmpt(id)) {
                 break;
             }
-            Long create=createTime[t];
-            Long update=new Date().getTime();
-            if(create==null) {
+            long create=createTime[t];
+            long update=new Date().getTime();
+            if(create==0) {
                 create = new Date().getTime();
                 MongoUtils.updateStatusAndCreateTimeById(dbCollection, id, allStatus[t],create,update);
             }else{
@@ -623,9 +616,14 @@ public class ImportDataAdapter {
             }
         }
     }
-
+    private void resetParam(Object[] docIds, long[] createTimes,Integer[] allStatus){
+        Arrays.fill(docIds, null);
+        Arrays.fill(createTimes, 0);//入库时间重置 by jiangxingqi 20170503
+        Arrays.fill(allStatus, CommonData.IMPORTSTATUS_IMPORT_SUCCESS);
+    }
     private static class BathStatistic {
         int flushSequence = 0;
         int batchSequence = 0;
     }
+
 }
