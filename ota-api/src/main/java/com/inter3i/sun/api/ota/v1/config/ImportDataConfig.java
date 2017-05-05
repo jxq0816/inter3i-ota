@@ -11,6 +11,7 @@
 
 package com.inter3i.sun.api.ota.v1.config;
 
+import com.inter3i.sun.api.ota.v1.job.ImportDataAdapter;
 import com.inter3i.sun.persistence.RepositoryFactory;
 import com.mongodb.client.MongoCollection;
 import org.slf4j.Logger;
@@ -99,7 +100,6 @@ public class ImportDataConfig {
                     cacheDatatTables.put(cacheName, dbCollection);
 
                     //初始化该缓存补充表连接器
-
                     dbCollection = RepositoryFactory.getMongoClient(serverConfig.getDbName(), serverConfig.geSplTableNamesBy(cacheName), serverConfig.getMongoDBIp(), serverConfig.getMongoDBPort());
                     supplyDocTables.put(cacheName, dbCollection);
                 }
