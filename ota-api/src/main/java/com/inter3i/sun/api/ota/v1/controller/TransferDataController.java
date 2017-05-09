@@ -58,8 +58,7 @@ public class TransferDataController {
                 boolean isChang = false;
                 for (int i = 0; i < array.length(); i++) {
                     JSONObject obj = (JSONObject) array.get(i);
-                    Object floor = obj.get("floor");
-                    if (floor == null) {
+                    if (obj.isNull("floor")) {
                         obj.put("floor", 0);
                         isChang = true;
                     }
@@ -73,7 +72,7 @@ public class TransferDataController {
                 insert(taskData, dbCollection2);//迁移
 
                 updateConvertStatus(dbCollection, taskData);//删除
-                System.out.println("---成功 -----");
+                //System.out.print("1");
             }
         } catch (Exception e) {
             logger.error("transfer data exception:[" + e.getMessage() + "]", e);
