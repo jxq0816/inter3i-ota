@@ -26,7 +26,7 @@ import java.util.Map;
 public class NLPDataFormater {
     private static final Logger logger = LoggerFactory.getLogger(NLPDataFormater.class);
 
-    /**
+    /** 添加
      * @param josn
      * @param result
      * @throws JSONException

@@ -71,7 +71,7 @@ public class SegmentFieldsConfig {
             "user.verified_reason", "retweeted_status.text", "retweeted_status.user.verified_reason", "status.text", "status.user.description",
             "status.user.verified_reason", "status.retweeted_status.text", "status.retweeted_status.user.description",
             "status.retweeted_status.user.verified_reason", "reply_comment.text", "reply_comment.user.description",
-            "reply_comment.user.verified_reason"};
+            "reply_comment.user.verified_reason","promotionInfos"};
 
     public static final String FIELD_PATH_SEP = "\\.";
     public static final String FIELD_PATH_SEP_CHAR = ".";
