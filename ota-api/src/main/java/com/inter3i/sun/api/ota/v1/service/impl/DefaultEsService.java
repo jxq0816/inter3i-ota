@@ -224,7 +224,7 @@ public class DefaultEsService  implements EsService {
                     outInfo.put(outInfoArray.optString(j),outputHighligh(mapOut,highlightedArray,outInfoArray.optString(j)));
                 }else{
                     if (mapOut.containsKey(outInfoArray.optString(j))){
-                        outInfo.put(outInfoArray.optString(j), mapOut.get(outInfoArray.optString(j)).getValue());
+                        //outInfo.put(outInfoArray.optString(j), mapOut.get(outInfoArray.optString(j)).getValue());
                     }
                 }
             } catch (JSONException e) {
