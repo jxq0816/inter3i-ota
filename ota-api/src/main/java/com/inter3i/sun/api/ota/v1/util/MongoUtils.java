@@ -63,18 +63,18 @@ public class MongoUtils {
      * @param coll
      * @param id
      * @param status
-     * @param createTime 创建时间 by jiangxingqi
-     * @param updateTime 更新时间 by jiangxingqi
+     * @param importSolrTime 入库时间 by jiangxingqi
+     * @param updateSolrTime 更新时间 by jiangxingqi
      */
-    public static void updateStatusAndCreateTimeById(MongoCollection<Document> coll, Object id, int status,long createTime,Long updateTime) {
+    public static void updateStatusAndCreateTimeById(MongoCollection<Document> coll, Object id, int status,long importSolrTime,Long updateSolrTime) {
         if (null == id) {
             throw new RuntimeException("updateStatusById for mongo exceptino:[_id is null!]");
         }
         Bson filter = Filters.eq("_id", id);
         Document newdoc = new Document();
         newdoc.put("importStatus", status);
-        newdoc.put("createTime", createTime);
-        newdoc.put("updateTime", updateTime);
+        newdoc.put("importSolrTime", importSolrTime);
+        newdoc.put("updateSolrTime", updateSolrTime);
         coll.updateOne(filter, new Document("$set", newdoc));
     }
 
@@ -83,16 +83,16 @@ public class MongoUtils {
      * @param coll
      * @param id
      * @param status
-     * @param updateTime by jiangxingqi
+     * @param updateSolrTime by jiangxingqi
      */
-    public static void updateStatusAndUpdateTimeById(MongoCollection<Document> coll, Object id, int status,long updateTime) {
+    public static void updateStatusAndUpdateTimeById(MongoCollection<Document> coll, Object id, int status,long updateSolrTime) {
         if (null == id) {
             throw new RuntimeException("updateStatusById for mongo exceptino:[_id is null!]");
         }
         Bson filter = Filters.eq("_id", id);
         Document newdoc = new Document();
         newdoc.put("importStatus", status);
-        newdoc.put("updateTime", updateTime);
+        newdoc.put("updateSolrTime", updateSolrTime);
         coll.updateOne(filter, new Document("$set", newdoc));
     }
 

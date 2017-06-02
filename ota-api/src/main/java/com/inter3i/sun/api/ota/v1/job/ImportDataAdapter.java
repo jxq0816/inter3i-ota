@@ -103,7 +103,7 @@ public class ImportDataAdapter {
 
         int maxDocNum = serverConfig.getDocNumPerImport() * serverConfig.getImportNumPerFlush();
         Object[] docIds = new Object[maxDocNum];
-        long[] createTimes = new long[maxDocNum];
+        long[] importSolrTimes = new long[maxDocNum];
         int[] allStatus = new int[maxDocNum];
 
         //批次、批量信息统计
@@ -152,8 +152,8 @@ public class ImportDataAdapter {
                             //累计的批次数
                             statistic.batchSequence++;
                             //批量入库
-                            //20170428 创建时间 by jiangxingqi
-                            importData2SolrDerect(batchDoc, dbDataCollection, offSet, docIds,createTimes, allStatus, statistic);
+                            //20170428 入库时间 by jiangxingqi
+                            importData2SolrDerect(batchDoc, dbDataCollection, offSet, docIds,importSolrTimes, allStatus, statistic);
                             Arrays.fill(batchDoc, null);
 
                             //满一个小批次，将小批次里面的文档编号置零
@@ -165,10 +165,10 @@ public class ImportDataAdapter {
                             //判断处理的批次数是否达到最大批次 达到最大批次则调用solr进行flush to desk 操作
                             if (batchApdNum >= serverConfig.getImportNumPerFlush()) {
                                 //20170428 创建时间 by jiangxingqi
-                                handleFlushAndUpadateStatus(docIds,createTimes,allStatus, dbDataCollection);
+                                handleFlushAndUpadateStatus(docIds,importSolrTimes,allStatus, dbDataCollection);
 
                                 // reset the docIds and the status
-                                resetParam(docIds,createTimes,allStatus);
+                                resetParam(docIds,importSolrTimes,allStatus);
                                 //满一个大批次，将大批次里面的小批次编号置零
                                 batchApdNum = 0;
                                 offSet = 0;
@@ -179,15 +179,15 @@ public class ImportDataAdapter {
                     if (batchDoc[0] != null) {//10001条时候
                         //累计的批次数
                         statistic.batchSequence++;
-                        //20170428 创建时间 by jiangxingqi
-                        importData2SolrDerect(batchDoc, dbDataCollection, offSet, docIds,createTimes, allStatus, statistic);
+                        //20170428 入库时间 by jiangxingqi
+                        importData2SolrDerect(batchDoc, dbDataCollection, offSet, docIds,importSolrTimes, allStatus, statistic);
                     }
 
                     if (docIds[0] != null) { //当不够10000时候，1000个文档时候，import10次，但是没有修改状态
-                        //20170428 创建时间 by jiangxingqi
-                        handleFlushAndUpadateStatus(docIds, createTimes,allStatus, dbDataCollection);
-                        // reset the docIds and the status and createTimes
-                        resetParam(docIds,createTimes,allStatus);
+                        //20170428 入库时间 by jiangxingqi
+                        handleFlushAndUpadateStatus(docIds, importSolrTimes,allStatus, dbDataCollection);
+                        // reset the docIds and the status and importSolrTimes
+                        resetParam(docIds,importSolrTimes,allStatus);
                     }
                     //执行 更新文章的 docId/father_guid/retweeted_guid等原创信息
                     //handleNedSupplyDocs();
@@ -200,10 +200,10 @@ public class ImportDataAdapter {
                     try {
                         //TODO 与奥异常时候将已经处理的数据刷新
                         if (docIds[0] != null) {
-                            //20170428 创建时间 by jiangxingqi
-                            handleFlushAndUpadateStatus(docIds,createTimes,allStatus, dbDataCollection);
+                            //20170428 入库时间 by jiangxingqi
+                            handleFlushAndUpadateStatus(docIds,importSolrTimes,allStatus, dbDataCollection);
                             // reset the docIds and the status
-                            resetParam(docIds,createTimes,allStatus);
+                            resetParam(docIds,importSolrTimes,allStatus);
                             //执行 更新文章的 docId/father_guid/retweeted_guid等原创信息
                             //handleNedSupplyDocs();
                         }
@@ -272,12 +272,12 @@ public class ImportDataAdapter {
      * @param dbCollection
      * @param offset
      * @param docIds
-     * @param createTimes 入库时间 by jiangxingqi
+     * @param importSolrTimes 入库时间 by jiangxingqi
      * @param allStatus
      * @param statistic
      * @throws JSONException
      */
-    private void importData2SolrDerect(final Document[] taskDatas, final MongoCollection dbCollection, int offset, final Object[] docIds,final long[] createTimes, final int[] allStatus, final BathStatistic statistic) throws JSONException {
+    private void importData2SolrDerect(final Document[] taskDatas, final MongoCollection dbCollection, int offset, final Object[] docIds,final long[] importSolrTimes, final int[] allStatus, final BathStatistic statistic) throws JSONException {
         int handleNum = 0;
         long startTime = System.currentTimeMillis();
 
@@ -319,8 +319,8 @@ public class ImportDataAdapter {
             handleRespData(segResultStr, status, start, end);
 
             //根据偏移量 设置 文档状态
-            //20170428 创建时间 by jiangxingqi
-            setStatusByoffset(taskDatas,docIds,createTimes,status,allStatus, dbCollection, offset);
+            //20170428 入库时间 by jiangxingqi
+            setStatusByoffset(taskDatas,docIds,importSolrTimes,status,allStatus, dbCollection, offset);
         } catch (Exception e) {
             e.printStackTrace();
             logger.error("Job:[ImportDataJob] --+-importData2SolrDerect by batch, handle the :[" + start + " TO " + end + "] doc to solr exception! batchNum:[" + serverConfig.getDocNumPerImport() + "] ErrorMsg:[" + e.getMessage() + "].", e);
@@ -409,13 +409,13 @@ public class ImportDataAdapter {
      *
      * @param docs
      * @param docIds
-     * @param createTimes 获取入库时间
+     * @param importSolrTimes 获取入库时间
      * @param status
      * @param allStatus
      * @param dbCollection
      * @param offset
      */
-    private void setStatusByoffset(final Document[] docs,final Object[] docIds,final long[] createTimes, int[] status, int[] allStatus, final MongoCollection dbCollection, int offset) {
+    private void setStatusByoffset(final Document[] docs,final Object[] docIds,final long[] importSolrTimes, int[] status, int[] allStatus, final MongoCollection dbCollection, int offset) {
         Document doc = null;
         for (int t = 0; t < docs.length; t++) {
             doc = docs[t];
@@ -425,9 +425,9 @@ public class ImportDataAdapter {
             //doc.put("importStatus", status[t]);
             docIds[offset + t] = doc.get(MongoUtils.PRIM_KEY_ID);
 
-            if(doc.get("createTime")!=null){
-                long createTime=(long) doc.get("createTime");
-                createTimes[offset + t] = createTime;
+            if(doc.get("importSolrTime")!=null){
+                long importSolrTime=(long) doc.get("importSolrTime");
+                importSolrTimes[offset + t] = importSolrTime;
             }
             allStatus[offset + t] = status[t];
         }
@@ -436,17 +436,17 @@ public class ImportDataAdapter {
     /**
      *
      * @param docIds
-     * @param createTime  创建时间 by jiangxingqi
+     * @param importSolrTimes  入库时间 by jiangxingqi
      * @param allStatus
      * @param dbCollection
      * @throws JSONException
      */
-    private void handleFlushAndUpadateStatus(Object[] docIds, long[] createTime, int[] allStatus, MongoCollection dbCollection) throws JSONException {
+    private void handleFlushAndUpadateStatus(Object[] docIds, long[] importSolrTimes, int[] allStatus, MongoCollection dbCollection) throws JSONException {
         //1.flush solr to desk
         flushSolrData();
 
         //2.update all document status
-        updateStatusById(docIds,createTime,allStatus,dbCollection);
+        updateStatusById(docIds,importSolrTimes,allStatus,dbCollection);
     }
 
 
@@ -595,24 +595,24 @@ public class ImportDataAdapter {
     /**
      *
      * @param docIds
-     * @param createTime 20170428 创建时间 by jiangxingqi
+     * @param importSolrTimes 20170428 入库时间 by jiangxingqi
      * @param allStatus
      * @param dbCollection
      */
-    private void updateStatusById(Object[] docIds, long[] createTime,int[] allStatus,MongoCollection dbCollection) {
+    private void updateStatusById(Object[] docIds, long[] importSolrTimes,int[] allStatus,MongoCollection dbCollection) {
         Object id;
         for (int t = 0; t < docIds.length; t++) {
             id = docIds[t];
             if (ValidateUtils.isNullOrEmpt(id)) {
                 break;
             }
-            long create=createTime[t];
-            long update=new Date().getTime();
-            if(create==0) {
-                create = new Date().getTime();
-                MongoUtils.updateStatusAndCreateTimeById(dbCollection, id, allStatus[t],create,update);
+            long importSolrTime=importSolrTimes[t];
+            long updateSolrTime=new Date().getTime();
+            if(importSolrTime==0) {
+                importSolrTime = updateSolrTime;
+                MongoUtils.updateStatusAndCreateTimeById(dbCollection, id, allStatus[t],importSolrTime,updateSolrTime);
             }else{
-                MongoUtils.updateStatusAndUpdateTimeById(dbCollection, id, allStatus[t],update);
+                MongoUtils.updateStatusAndUpdateTimeById(dbCollection, id, allStatus[t],updateSolrTime);
             }
         }
     }
@@ -620,12 +620,12 @@ public class ImportDataAdapter {
     /**
      * 重置参数列表
      * @param docIds
-     * @param createTimes
+     * @param importSolrTimes
      * @param allStatus
      */
-    private void resetParam(Object[] docIds, long[] createTimes,int[] allStatus){
+    private void resetParam(Object[] docIds, long[] importSolrTimes,int[] allStatus){
         Arrays.fill(docIds, null);
-        Arrays.fill(createTimes, 0);//入库时间重置 by jiangxingqi 20170503
+        Arrays.fill(importSolrTimes, 0);//入库时间重置 by jiangxingqi 20170503
         Arrays.fill(allStatus, CommonData.IMPORTSTATUS_IMPORT_SUCCESS);
     }
     private static class BathStatistic {
