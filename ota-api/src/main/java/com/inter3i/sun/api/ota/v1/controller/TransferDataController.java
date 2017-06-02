@@ -19,6 +19,7 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Filters;
 import org.bson.Document;
 import org.bson.conversions.Bson;
+import org.bson.types.ObjectId;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -58,7 +59,8 @@ public class TransferDataController {
                 boolean isChang = false;
                 for (int i = 0; i < array.length(); i++) {
                     JSONObject obj = (JSONObject) array.get(i);
-                    if (obj.isNull("floor")) {
+                    Object floor = obj.get("floor");
+                    if (floor == null) {
                         obj.put("floor", 0);
                         isChang = true;
                     }
@@ -72,7 +74,7 @@ public class TransferDataController {
                 insert(taskData, dbCollection2);//迁移
 
                 updateConvertStatus(dbCollection, taskData);//删除
-                //System.out.print("1");
+                System.out.println("---成功 -----");
             }
         } catch (Exception e) {
             logger.error("transfer data exception:[" + e.getMessage() + "]", e);

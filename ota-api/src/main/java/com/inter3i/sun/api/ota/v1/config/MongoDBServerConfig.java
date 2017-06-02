@@ -56,7 +56,7 @@ public class MongoDBServerConfig {
                     } else if ("di.mongoDBPort".equals(key)) {
                         tmp.setMongoDBPort(Integer.valueOf((String) props.get(key)));
                     } else if (key.startsWith("di.cacheTableMap[")) {
-                        tmp.add4CacheTableMap(getKeyIn(key), (String) props.get(key));
+                        tmp.cacheNameCacheDescMap.put(getKeyIn(key), (String) props.get(key));
                     } else if ("di.nlpServerIp".equals(key)) {
                         tmp.setNlpServerIp((String) props.get(key));
                     } else if ("di.nlpServerPort".equals(key)) {
@@ -80,18 +80,18 @@ public class MongoDBServerConfig {
                     } else if ("di.importNumPerFlush".equals(key)) {
                         tmp.setImportNumPerFlush(Integer.valueOf((String) props.get(key)));
                     } else if (key.startsWith("di.cacheDataTables[")) {
-                        tmp.add4CacheDataTables(getKeyIn(key), (String) props.get(key));
+                        tmp.cacheNameDataTableMap.put(getKeyIn(key), (String) props.get(key));
                     } else if (key.startsWith("di.cacheSplTables[")) {
                         tmp.add4CacheSplTables(getKeyIn(key), (String) props.get(key));
+                    } else if (key.startsWith("di.dbAuth.userName.")) {
+                        //提取用户名
+                        String dbName = getKeyInLastSpliteTerm(key, ".");
+                        tmp.addAuthUserName4(dbName, (String) props.get(key));
+                    } else if (key.startsWith("di.dbAuth.password.")) {
+                        //提取密码
+                        String dbName = getKeyInLastSpliteTerm(key, ".");
+                        tmp.addAuthPassword4(dbName, (String) props.get(key));
                     }
-
-//                    else if ("di.dataStorage.ip".equals(key)) {
-//                        tmp.dataStorageServerIp = (String) props.get(key);
-//                    } else if ("di.dataStorage.port".equals(key)) {
-//                        tmp.dataStorageServerPort = Integer.valueOf((String) props.get(key));
-//                    } else if ("di.dataStorage.flushPath".equals(key)) {
-//                        tmp.dataStorageSolrFlushPath = (String) props.get(key);
-//                    }
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -104,6 +104,17 @@ public class MongoDBServerConfig {
     //获取di.cacheTableMap[cache01] 中的[] 中的key
     private static String getKeyIn(String key) {
         return key.substring(key.indexOf("[") + 1, key.length() - 1);
+    }
+
+    //获取di.dbAuth.password.3idata 中的 3idata
+    private static String getKeyInLastSpliteTerm(String key, String splitChar) {
+        if (!key.contains(splitChar)) {
+            return null;
+        }
+        if (key.endsWith(splitChar)) {
+            throw new RuntimeException("key can not end with splitChar:[" + splitChar + "].");
+        }
+        return key.substring(key.lastIndexOf(splitChar) + 1);
     }
 
     private static String importPath;
@@ -126,9 +137,90 @@ public class MongoDBServerConfig {
     private int importNumPerFlush;
     private Map<String, Integer> cachePortMap = new HashMap<>(4);
 
-//    private String dataStorageServerIp;
-//    private int dataStorageServerPort;
-//    private String dataStorageSolrFlushPath;
+    /**
+     * 根据不同的配置 查找缓存对应的数据库表：数据表
+     */
+    private Map<String, String> cacheNameDataTableMap = new HashMap<>(4);
+
+
+    public Iterator<String> getAllCacheNames() {
+        return cacheNameDataTableMap.keySet().iterator();
+    }
+
+    /**
+     * 所有的缓存名称 ---> 描述的 映射
+     */
+    private Map<String, String> cacheNameCacheDescMap = new HashMap<>(4);
+
+    public String getDataTableNameBy(final String cacheName) {
+        validateCacheNameDataTables(cacheName);
+        return cacheNameDataTableMap.get(cacheName);
+    }
+
+    private void validateCacheNameDataTables(final String cacheName) {
+        if (ValidateUtils.isNullOrEmpt(this.cacheNameDataTableMap)) {
+            throw new RuntimeException("cache name <===> dataTable mapping is empety!");
+        }
+        if (!cacheNameDataTableMap.containsKey(cacheName)) {
+            throw new RuntimeException("dataTable name for cacheName:[" + cacheName + "] is null.");
+        }
+    }
+
+    public DBAuth getDBAuthBy(final String dbName) {
+        if (!dbAuths.containsKey(dbName)) {
+//            throw new RuntimeException("getUserName for:" + dbName + "] exception, the config of dbAuth not contains the config for this dbname.");
+            return null;
+        }
+        return dbAuths.get(dbName);
+    }
+
+    /**
+     * 根据不同的配置 查找缓存对应的数据库表：数据表
+     */
+    private Map<String, DBAuth> dbAuths = new HashMap<String, DBAuth>(2);
+
+    public static final class DBAuth {
+        private String userName;
+        private String password;
+
+        public String getUserName() {
+            return userName;
+        }
+
+        public void setUserName(String userName) {
+            this.userName = userName;
+        }
+
+        public String getPassword() {
+            return password;
+        }
+
+        public void setPassword(String password) {
+            this.password = password;
+        }
+    }
+
+    public void addAuthUserName4(final String dbName, final String userName) {
+        DBAuth dbAuth = null;
+        if (!dbAuths.containsKey(dbName)) {
+            dbAuth = new DBAuth();
+            dbAuths.put(dbName, dbAuth);
+        } else {
+            dbAuth = dbAuths.get(dbName);
+        }
+        dbAuth.setUserName(userName);
+    }
+
+    public void addAuthPassword4(final String dbName, final String password) {
+        DBAuth dbAuth = null;
+        if (!dbAuths.containsKey(dbName)) {
+            dbAuth = new DBAuth();
+            dbAuths.put(dbName, dbAuth);
+        } else {
+            dbAuth = dbAuths.get(dbName);
+        }
+        dbAuth.setPassword(password);
+    }
 
 
     public String getDbName() {
@@ -147,25 +239,6 @@ public class MongoDBServerConfig {
         this.mongoDBIp = mongoDBIp;
     }
 
-    public Map<String, String> getCacheDataTables() {
-        return cacheDataTables;
-    }
-
-    public void setCacheDataTables(Map<String, String> cacheDataTables) {
-        this.cacheDataTables = cacheDataTables;
-    }
-
-    public void add4CacheDataTables(String key, String value) {
-        cacheDataTables.put(key, value);
-    }
-
-    public Map<String, String> getCacheSplTables() {
-        return cacheSplTables;
-    }
-
-    public void setCacheSplTables(Map<String, String> cacheSplTables) {
-        this.cacheSplTables = cacheSplTables;
-    }
 
     public void add4CacheSplTables(String key, String value) {
         cacheSplTables.put(key, value);
@@ -177,18 +250,6 @@ public class MongoDBServerConfig {
 
     public void setMongoDBPort(int mongoDBPort) {
         this.mongoDBPort = mongoDBPort;
-    }
-
-    public Map<String, String> getCacheTableMap() {
-        return cacheDataTables;
-    }
-
-    public void setCacheTableMap(Map<String, String> cacheTableMap) {
-        this.cacheDataTables = cacheTableMap;
-    }
-
-    public void add4CacheTableMap(String key, String value) {
-        cacheDataTables.put(key, value);
     }
 
     public String getNlpServerIp() {
@@ -328,29 +389,6 @@ public class MongoDBServerConfig {
         }
         if (!cachePortMap.containsKey(serverCacheName)) {
             throw new RuntimeException("import port for cacheName:[" + serverCacheName + "] is null.");
-        }
-    }
-
-
-    /**
-     * 根据不同的配置 查找缓存对应的数据库表：数据表
-     *
-     * @param cacheName
-     * @return
-     */
-    private Map<String, String> cacheDataTables = new HashMap<>(4);
-
-    public String getDataTableNamesBy(final String cacheName) {
-        validateCacheNameDataTables(cacheName);
-        return this.cacheDataTables.get(cacheName);
-    }
-
-    private void validateCacheNameDataTables(final String cacheName) {
-        if (ValidateUtils.isNullOrEmpt(this.cacheDataTables)) {
-            throw new RuntimeException("cache name <===> dataTable mapping is empety!");
-        }
-        if (!cacheDataTables.containsKey(cacheName)) {
-            throw new RuntimeException("dataTable name for cacheName:[" + cacheName + "] is null.");
         }
     }
 

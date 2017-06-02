@@ -47,9 +47,11 @@ public class SegmenteJob {
     }
 
     public void segmentDocs4(final String cacheName) {
-        logger.info("Job:[segmentData] for cacheName:[" + cacheName + "] start  DBServerIP:[" + serverConfig.getMongoDBIp() + "] DBServerPort:[" + serverConfig.getMongoDBPort() + "]  ... ");
+        String collectName = serverConfig.getDataTableNameBy(cacheName);
+        logger.info("Job:[segmentData] for cacheName:[" + cacheName + "] from collect:[" + collectName + "] start. DBServerIP:[" + serverConfig.getMongoDBIp() + "] DBServerPort:[" + serverConfig.getMongoDBPort() + "]  ... ");
         SegmentAdapter segmentAdapter = new SegmentAdapter(serverConfig, cacheName, ImportDataConfig.DBClinetHolder.getInstance(serverConfig).getDataCollectionBy(cacheName));
         segmentAdapter.doSegment4Docs();
+        logger.info("Job:[segmentData] for cacheName:[" + cacheName + "] from collect:[" + collectName + "] run complete. DBServerIP:[" + serverConfig.getMongoDBIp() + "] DBServerPort:[" + serverConfig.getMongoDBPort() + "].");
     }
 
 }

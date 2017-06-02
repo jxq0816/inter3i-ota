@@ -18,6 +18,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 public class ImportDataConfig {
@@ -92,16 +93,32 @@ public class ImportDataConfig {
             try {
                 logger.info("init all mongoDB config:" + serverConfig.toString());
 
-                Map<String, String> allCaches = serverConfig.getCacheTableMap();
+                Iterator<String> allCacheNames = serverConfig.getAllCacheNames();
                 MongoCollection dbCollection = null;
-                for (String cacheName : allCaches.keySet()) {
+                String cacheName = null;
+                String dbName = null;
+                MongoDBServerConfig.DBAuth dbAuth = null;
+                while (allCacheNames.hasNext()) {
                     //初始化该缓存数据表连接器
-                    dbCollection = RepositoryFactory.getMongoClient(serverConfig.getDbName(), serverConfig.getDataTableNamesBy(cacheName), serverConfig.getMongoDBIp(), serverConfig.getMongoDBPort());
-                    cacheDatatTables.put(cacheName, dbCollection);
+                    cacheName = allCacheNames.next();
+                    dbName = serverConfig.getDbName();
+                    dbAuth = serverConfig.getDBAuthBy(dbName);
 
-                    //初始化该缓存补充表连接器
-                    dbCollection = RepositoryFactory.getMongoClient(serverConfig.getDbName(), serverConfig.geSplTableNamesBy(cacheName), serverConfig.getMongoDBIp(), serverConfig.getMongoDBPort());
-                    supplyDocTables.put(cacheName, dbCollection);
+                    if (null != dbAuth) {
+                        dbCollection = RepositoryFactory.getMongoClient(dbName, serverConfig.getDataTableNameBy(cacheName), dbAuth.getUserName(), dbAuth.getPassword(), serverConfig.getMongoDBIp(), serverConfig.getMongoDBPort());
+                        cacheDatatTables.put(cacheName, dbCollection);
+
+                        //初始化该缓存补充表连接器
+                        dbCollection = RepositoryFactory.getMongoClient(dbName, serverConfig.geSplTableNamesBy(cacheName), dbAuth.getUserName(), dbAuth.getPassword(), serverConfig.getMongoDBIp(), serverConfig.getMongoDBPort());
+                        supplyDocTables.put(cacheName, dbCollection);
+                    } else {
+                        dbCollection = RepositoryFactory.getMongoClient(dbName, serverConfig.getDataTableNameBy(cacheName), serverConfig.getMongoDBIp(), serverConfig.getMongoDBPort());
+                        cacheDatatTables.put(cacheName, dbCollection);
+
+                        //初始化该缓存补充表连接器
+                        dbCollection = RepositoryFactory.getMongoClient(dbName, serverConfig.geSplTableNamesBy(cacheName), serverConfig.getMongoDBIp(), serverConfig.getMongoDBPort());
+                        supplyDocTables.put(cacheName, dbCollection);
+                    }
                 }
                 isInited = true;
             } catch (Exception e) {

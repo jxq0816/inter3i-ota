@@ -48,9 +48,11 @@ public class ImportDataJob {
     }
 
     private void importDoc4(final String cacheName, final MongoDBServerConfig serverConfig) {
-        logger.info("Job:[importDoc2Solr] cacheName:[" + cacheName + "] start ...");
+        String collectName = serverConfig.getDataTableNameBy(cacheName);
+        logger.info("Job:[importDoc2Solr] cacheName:[" + cacheName + "] from collect:" + collectName + "] start ...");
         ImportDataAdapter importDataAdapter = new ImportDataAdapter(cacheName, ImportDataConfig.DBClinetHolder.getInstance(serverConfig).getDataCollectionBy(cacheName), ImportDataConfig.DBClinetHolder.getInstance(serverConfig).getSplCollectionBy(cacheName), serverConfig);
         importDataAdapter.importDoc2Solr();
+        logger.info("Job:[importDoc2Solr] cacheName:[" + cacheName + "] from collect:" + collectName + "] run compelet.");
 
         // ********************* 测试代码 ********************* //
         /*try {

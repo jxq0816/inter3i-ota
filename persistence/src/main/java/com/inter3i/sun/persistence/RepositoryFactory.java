@@ -13,11 +13,10 @@ import com.inter3i.sun.persistence.impl.MongoRepositoryFactory;
 import com.mongodb.*;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
+import com.mongodb.connection.Server;
 
 import java.net.UnknownHostException;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
+import java.util.*;
 
 public abstract class RepositoryFactory {
     //private static Map<String, Repository> repositoryMap = new HashMap<String, Repository>(8);
@@ -45,7 +44,7 @@ public abstract class RepositoryFactory {
         }
     }*/
 
-    public static MongoCollection getMongoClient(String dbName, String tableName, final String serverAdds, final int port) throws UnknownHostException {
+    public static MongoCollection getMongoClient(String dbName, String tableName, String userName, String password, final String serverAdds, final int port) throws UnknownHostException {
         String repositoryName = dbName + "_+_" + tableName;
         if (mogoClientsMap.containsKey(repositoryName)) {
             return mogoClientsMap.get(repositoryName);
@@ -57,13 +56,17 @@ public abstract class RepositoryFactory {
                 //MongoRepositoryFactory.fromDefaultDb(dbName);
                 //"mongodb://localhost/" + dbName;
                 // DBCollection collection = initClient(dbName, tableName);
-                MongoCollection collection = getMongoClientNew(dbName, tableName, serverAdds, port);
+                MongoCollection collection = createMongoCollection(dbName, tableName, userName, password, serverAdds, port);
                 mogoClientsMap.put(repositoryName, collection);
                 return collection;
             } else {
                 return mogoClientsMap.get(repositoryName);
             }
         }
+    }
+
+    public static MongoCollection getMongoClient(String dbName, String tableName, final String serverAdds, final int port) throws UnknownHostException {
+        return getMongoClient(dbName, tableName, null, null, serverAdds, port);
     }
 
     public static void destoryAllClient() {
@@ -87,13 +90,30 @@ public abstract class RepositoryFactory {
         return db.getCollection(tableName);
     }*/
 
-    public static MongoCollection getMongoClientNew(String dbName, String tableName, final String serverAdds, final int port) {
+    public static MongoCollection createMongoCollection(String dbName, String tableName, String userName, String password, final String serverAdds, final int port) {
         //ServerAddress ssAddress = new ServerAddress("127.0.0.1", 27017);
         ServerAddress ssAddress = new ServerAddress(serverAdds, port);
         //ServerAddress ssAddress = new ServerAddress("192.168.0.20", 40000);
         MongoClientOptions options = MongoClientOptions.builder().connectionsPerHost(100).
                 threadsAllowedToBlockForConnectionMultiplier(50).build();
-        MongoClient mongoClient = new MongoClient(ssAddress, options);
+
+        //
+        List<ServerAddress> seeds = new ArrayList<ServerAddress>(1);
+        seeds.add(ssAddress);
+
+        MongoClient mongoClient = null;
+
+        if (null != userName && 0 < userName.length() && null != password && 0 < password.length()) {
+            //创建用户名密码
+            List<MongoCredential> credentials = new ArrayList<MongoCredential>(1);
+            //MongoCredential.createMongoCRCredential(userName, dbName, password.toCharArray());
+            MongoCredential credential = MongoCredential.createCredential(userName, dbName, password.toCharArray());
+            credentials.add(credential);
+            //创建安全连接
+            mongoClient = new MongoClient(seeds, credentials, options);
+        } else {
+            mongoClient = new MongoClient(ssAddress, options);
+        }
         // 连接到数据库
         MongoDatabase mongoDatabase = mongoClient.getDatabase(dbName);
         MongoCollection collection = mongoDatabase.getCollection(tableName);

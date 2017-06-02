@@ -34,7 +34,7 @@ public class CommonDataService implements ICommonDataService {
         }
         logger.info("--+-savaCommonData into mongoDB ...");
         long starTime = System.currentTimeMillis();
-        MongoCollection dbCollection = RepositoryFactory.getMongoClient(serverConfig.getDbName(), serverConfig.getDataTableNamesBy(cacheName), serverConfig.getMongoDBIp(), serverConfig.getMongoDBPort());
+        MongoCollection dbCollection = RepositoryFactory.getMongoClient(serverConfig.getDbName(), serverConfig.getDataTableNameBy(cacheName), serverConfig.getMongoDBIp(), serverConfig.getMongoDBPort());
         Document mogoDbBean = converBean2Doc(commonData);
         dbCollection.insertOne(mogoDbBean);
         long endTime = System.currentTimeMillis();
