@@ -26,7 +26,7 @@ import org.springframework.web.bind.annotation.*;
 public class ImportDataController {
     private static final Logger logger = LoggerFactory.getLogger(CommonDataController.class);
 
-    private MongoDBServerConfig serverConfig = MongoDBServerConfig.getConfig();
+    private MongoDBServerConfig serverConfig = MongoDBServerConfig.getConfig("dataSource2");
 
     /*private static final Runnable innerThread = () -> {
         while (true) {

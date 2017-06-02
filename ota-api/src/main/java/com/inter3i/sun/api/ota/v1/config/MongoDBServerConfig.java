@@ -29,7 +29,11 @@ import java.util.Properties;
 public class MongoDBServerConfig {
     private static MongoDBServerConfig instance = null;
 
-    public static MongoDBServerConfig getConfig() {
+    public static MongoDBServerConfig getConfig(String dataSourceNum) {
+        String dbNameKey="di.dbName."+dataSourceNum;
+        String ipKey="di.mongoDBIp."+dataSourceNum;
+        String portKey="di.mongoDBPort."+dataSourceNum;
+
         if (instance != null) {
             return instance;
         }
@@ -49,16 +53,8 @@ public class MongoDBServerConfig {
                 String key;
                 while (it.hasNext()) {
                     key = (String) it.next();
+
                     switch (key){
-                        case "di.dbName.dataSource1":
-                            tmp.setDbName((String) props.get(key));
-                            break;
-                        case "di.mongoDBIp.dataSource1":
-                            tmp.setMongoDBIp((String) props.get(key));
-                            break;
-                        case "di.mongoDBPort.dataSource1":
-                            tmp.setMongoDBPort(Integer.valueOf((String) props.get(key)));
-                            break;
                         case "di.nlpServerIp":
                             tmp.setNlpServerIp((String) props.get(key));
                             break;
@@ -90,7 +86,14 @@ public class MongoDBServerConfig {
                             tmp.setImportNumPerFlush(Integer.valueOf((String) props.get(key)));
                             break;
                     }
-                    if (key.startsWith("di.cacheTableMap[")) {
+
+                    if(ipKey.equals(key)){
+                        tmp.setMongoDBIp((String) props.get(key));
+                    } else if(dbNameKey.equals(key)){
+                        tmp.setDbName((String) props.get(key));
+                    }else if(portKey.equals(key)){
+                        tmp.setMongoDBPort(Integer.valueOf((String) props.get(key)));
+                    }else if (key.startsWith("di.cacheTableMap[")) {
                         tmp.cacheNameCacheDescMap.put(getKeyIn(key), (String) props.get(key));
                     } else if (key.startsWith("di.cachePortMap[")) {
                         tmp.add4CachePortMap(getKeyIn(key), Integer.valueOf((String) props.get(key)));

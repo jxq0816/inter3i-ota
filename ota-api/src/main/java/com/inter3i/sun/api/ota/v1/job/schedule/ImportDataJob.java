@@ -27,7 +27,7 @@ public class ImportDataJob {
    /* @Autowired
     private MongoDBServerConfig serverConfig;*/
 
-    private MongoDBServerConfig serverConfig = MongoDBServerConfig.getConfig();
+    private MongoDBServerConfig serverConfig = MongoDBServerConfig.getConfig("dataSource2");
 
     public void importDoc2SolrFromCache1() {
         importDoc4(ImportDataConfig.CACHE_NAME_01, serverConfig);

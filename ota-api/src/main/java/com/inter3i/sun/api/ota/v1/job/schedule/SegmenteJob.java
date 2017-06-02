@@ -16,7 +16,6 @@ import com.inter3i.sun.api.ota.v1.config.MongoDBServerConfig;
 import com.inter3i.sun.api.ota.v1.job.SegmentAdapter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
 
@@ -28,7 +27,7 @@ public class SegmenteJob {
     /*@Autowired
     private MongoDBServerConfig serverConfig;*/
 
-    private MongoDBServerConfig serverConfig = MongoDBServerConfig.getConfig();
+    private MongoDBServerConfig serverConfig = MongoDBServerConfig.getConfig("dataSource2");
 
     public void segmentDocs4Cache1() {
         segmentDocs4(ImportDataConfig.CACHE_NAME_01);

@@ -23,7 +23,7 @@ import java.io.*;
 public class SegmentController {
 
 
-    private static MongoDBServerConfig serverConfig = MongoDBServerConfig.getConfig();
+    private static MongoDBServerConfig serverConfig = MongoDBServerConfig.getConfig("dataSource2");
 
     public static void main(String[] args) {
         String cacheName = "cache02";

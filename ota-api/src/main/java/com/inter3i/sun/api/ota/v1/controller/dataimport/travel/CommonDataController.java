@@ -38,7 +38,7 @@ public class CommonDataController {
    /* @Autowired
     private MongoDBServerConfig serverConfig;*/
 
-    private MongoDBServerConfig serverConfig = MongoDBServerConfig.getConfig();
+    private MongoDBServerConfig serverConfig = MongoDBServerConfig.getConfig("dataSource1");
 
 
     CommonDataController() {
