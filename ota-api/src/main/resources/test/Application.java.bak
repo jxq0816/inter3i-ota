@@ -1,0 +1,49 @@
+/*
+ *
+ * Copyright (c) 2017, inter3i.com. All rights reserved.
+ * All rights reserved.
+ *
+ * Author: Administrator
+ * Created: 2017/05/11
+ * Description:
+ *
+ */
+
+package com.inter3i.sun.api.ota.v1;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.context.embedded.ConfigurableEmbeddedServletContainer;
+import org.springframework.boot.context.embedded.EmbeddedServletContainerCustomizer;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.web.support.SpringBootServletInitializer;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.ImportResource;
+
+@ComponentScan
+@EnableAutoConfiguration
+@EnableConfigurationProperties
+@ImportResource("classpath:dispatcher-servlet.xml")
+public class Application extends SpringBootServletInitializer implements EmbeddedServletContainerCustomizer {
+
+    private static final String CONTEXT_PATH = "/otaapi";
+   /* @Override
+    protected SpringApplicationBuilder configure(SpringApplicationBuilder builder) {
+        return builder.sources(Application.class);
+    }*/
+
+    public static void main(String[] args) throws Exception {
+        SpringApplication.run(Application.class, args);
+    }
+
+    /*@Override
+    protected SpringApplicationBuilder configure(SpringApplicationBuilder builder) {
+        return builder.sources(Application.class);
+    }*/
+
+    @Override
+    public void customize(ConfigurableEmbeddedServletContainer container) {
+        container.setPort(7080);
+        container.setContextPath(CONTEXT_PATH);
+    }
+}
