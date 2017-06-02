@@ -46,39 +46,54 @@ public class MongoDBServerConfig {
                 Resource resource = new ClassPathResource("/importdata.properties");
                 Properties props = PropertiesLoaderUtils.loadProperties(resource);
                 Iterator it = props.keySet().iterator();
-                String key = null;
+                String key;
                 while (it.hasNext()) {
                     key = (String) it.next();
-                    if ("di.dbName".equals(key)) {
-                        tmp.setDbName((String) props.get(key));
-                    } else if ("di.mongoDBIp".equals(key)) {
-                        tmp.setMongoDBIp((String) props.get(key));
-                    } else if ("di.mongoDBPort".equals(key)) {
-                        tmp.setMongoDBPort(Integer.valueOf((String) props.get(key)));
-                    } else if (key.startsWith("di.cacheTableMap[")) {
+                    switch (key){
+                        case "di.dbName.dataSource1":
+                            tmp.setDbName((String) props.get(key));
+                            break;
+                        case "di.mongoDBIp.dataSource1":
+                            tmp.setMongoDBIp((String) props.get(key));
+                            break;
+                        case "di.mongoDBPort.dataSource1":
+                            tmp.setMongoDBPort(Integer.valueOf((String) props.get(key)));
+                            break;
+                        case "di.nlpServerIp":
+                            tmp.setNlpServerIp((String) props.get(key));
+                            break;
+                        case "di.nlpServerPort":
+                            tmp.setNlpServerPort(Integer.valueOf((String) props.get(key)));
+                            break;
+                        case "di.nlpReqPath":
+                            tmp.setNlpReqPath((String) props.get(key));
+                            break;
+                        case "di.nlpReqTimeOut":
+                            tmp.setNlpReqTimeOut(Integer.valueOf((String) props.get(key)));
+                            break;
+                        case "di.webServerIp":
+                            tmp.setWebServerIp((String) props.get(key));
+                            break;
+                        case "di.importPath":
+                            tmp.setImportPath((String) props.get(key));
+                            break;
+                        case "di.flushPath":
+                            tmp.setFlushPath((String) props.get(key));
+                            break;
+                        case "di.supplyPath":
+                            tmp.setSupplyPath((String) props.get(key));
+                            break;
+                        case "di.docNumPerImport":
+                            tmp.setDocNumPerImport(Integer.valueOf((String) props.get(key)));
+                            break;
+                        case "di.importNumPerFlush":
+                            tmp.setImportNumPerFlush(Integer.valueOf((String) props.get(key)));
+                            break;
+                    }
+                    if (key.startsWith("di.cacheTableMap[")) {
                         tmp.cacheNameCacheDescMap.put(getKeyIn(key), (String) props.get(key));
-                    } else if ("di.nlpServerIp".equals(key)) {
-                        tmp.setNlpServerIp((String) props.get(key));
-                    } else if ("di.nlpServerPort".equals(key)) {
-                        tmp.setNlpServerPort(Integer.valueOf((String) props.get(key)));
-                    } else if ("di.nlpReqPath".equals(key)) {
-                        tmp.setNlpReqPath((String) props.get(key));
-                    } else if ("di.nlpReqTimeOut".equals(key)) {
-                        tmp.setNlpReqTimeOut(Integer.valueOf((String) props.get(key)));
-                    } else if ("di.webServerIp".equals(key)) {
-                        tmp.setWebServerIp((String) props.get(key));
                     } else if (key.startsWith("di.cachePortMap[")) {
                         tmp.add4CachePortMap(getKeyIn(key), Integer.valueOf((String) props.get(key)));
-                    } else if ("di.importPath".equals(key)) {
-                        tmp.setImportPath((String) props.get(key));
-                    } else if ("di.flushPath".equals(key)) {
-                        tmp.setFlushPath((String) props.get(key));
-                    } else if ("di.supplyPath".equals(key)) {
-                        tmp.setSupplyPath((String) props.get(key));
-                    } else if ("di.docNumPerImport".equals(key)) {
-                        tmp.setDocNumPerImport(Integer.valueOf((String) props.get(key)));
-                    } else if ("di.importNumPerFlush".equals(key)) {
-                        tmp.setImportNumPerFlush(Integer.valueOf((String) props.get(key)));
                     } else if (key.startsWith("di.cacheDataTables[")) {
                         tmp.cacheNameDataTableMap.put(getKeyIn(key), (String) props.get(key));
                     } else if (key.startsWith("di.cacheSplTables[")) {
