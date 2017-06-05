@@ -15,27 +15,27 @@ import java.util.Set;
  * Created by boxiaotong on 2017/6/5.
  */
 @Controller
-@RequestMapping(value = {"task",""})
+@RequestMapping("task")
 public class TaskScheduledController {
     @Autowired
     private TaskScheduledService taskScheduledService;
 
     @ResponseBody
     @RequestMapping(value = {"insert",""})
-    public String insert(String jobName,String cacheName) {
-        String rs=taskScheduledService.insert(jobName,cacheName);
+    public String insert(String jobType,String cacheName) {
+        String rs=taskScheduledService.insert(jobType,cacheName);
         return rs;
     }
 
     @ResponseBody
     @RequestMapping("update")
-    public String update(String jobName,String cacheName,boolean status) {
-        String rs=taskScheduledService.updateOne(jobName,cacheName,status);
+    public String update(String jobType,String cacheName,boolean status) {
+        String rs=taskScheduledService.updateOne(jobType,cacheName,status);
         return rs;
     }
 
     @ResponseBody
-    @RequestMapping("list")
+    @RequestMapping(value = {"list",""})
     public Set list() {
         Set set= new HashSet<Document>();
         Iterator<Document> iterator=taskScheduledService.findList();

@@ -14,14 +14,22 @@ package com.inter3i.sun.api.ota.v1.job.schedule;
 import com.inter3i.sun.api.ota.v1.config.ImportDataConfig;
 import com.inter3i.sun.api.ota.v1.config.MongoDBServerConfig;
 import com.inter3i.sun.api.ota.v1.job.ImportDataAdapter;
+import com.inter3i.sun.api.ota.v1.service.TaskScheduledService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
 
 @Component("importJob")
 @Primary
 public class ImportDataJob {
+
+    @Autowired
+    private TaskScheduledService taskScheduledService;
+
+    private final String jobType="0";
+
     private static final Logger logger = LoggerFactory.getLogger(ImportDataJob.class);
 
    /* @Autowired
@@ -30,20 +38,32 @@ public class ImportDataJob {
     private MongoDBServerConfig serverConfig = MongoDBServerConfig.getConfig("dataSource2");
 
     public void importDoc2SolrFromCache1() {
-        importDoc4(ImportDataConfig.CACHE_NAME_01, serverConfig);
+        Boolean status=taskScheduledService.getStatus(jobType,ImportDataConfig.CACHE_NAME_01);
+        if(status){
+            importDoc4(ImportDataConfig.CACHE_NAME_01, serverConfig);
+        }
     }
 
 
     public void importDoc2SolrFromCache2() {
-        importDoc4(ImportDataConfig.CACHE_NAME_02, serverConfig);
+        Boolean status=taskScheduledService.getStatus(jobType,ImportDataConfig.CACHE_NAME_02);
+        if(status) {
+            importDoc4(ImportDataConfig.CACHE_NAME_02, serverConfig);
+        }
     }
 
     public void importDoc2SolrFromCache3() {
-        importDoc4(ImportDataConfig.CACHE_NAME_03, serverConfig);
+        Boolean status=taskScheduledService.getStatus(jobType,ImportDataConfig.CACHE_NAME_03);
+        if(status) {
+            importDoc4(ImportDataConfig.CACHE_NAME_03, serverConfig);
+        }
     }
 
     public void importDoc2SolrFromCache4() {
-        importDoc4(ImportDataConfig.CACHE_NAME_04, serverConfig);
+        Boolean status=taskScheduledService.getStatus(jobType,ImportDataConfig.CACHE_NAME_04);
+        if(status) {
+            importDoc4(ImportDataConfig.CACHE_NAME_04, serverConfig);
+        }
     }
 
     private void importDoc4(final String cacheName, final MongoDBServerConfig serverConfig) {

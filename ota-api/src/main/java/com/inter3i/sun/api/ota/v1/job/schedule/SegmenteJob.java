@@ -14,8 +14,10 @@ package com.inter3i.sun.api.ota.v1.job.schedule;
 import com.inter3i.sun.api.ota.v1.config.ImportDataConfig;
 import com.inter3i.sun.api.ota.v1.config.MongoDBServerConfig;
 import com.inter3i.sun.api.ota.v1.job.SegmentAdapter;
+import com.inter3i.sun.api.ota.v1.service.TaskScheduledService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
 
@@ -24,25 +26,42 @@ import org.springframework.stereotype.Component;
 public class SegmenteJob {
     private static final Logger logger = LoggerFactory.getLogger(SegmenteJob.class);
 
+    @Autowired
+    private TaskScheduledService taskScheduledService;
+
+    private final String jobType="1";
+
     /*@Autowired
     private MongoDBServerConfig serverConfig;*/
 
     private MongoDBServerConfig serverConfig = MongoDBServerConfig.getConfig("dataSource2");
 
     public void segmentDocs4Cache1() {
-        segmentDocs4(ImportDataConfig.CACHE_NAME_01);
+        Boolean status=taskScheduledService.getStatus(jobType,ImportDataConfig.CACHE_NAME_01);
+        if(status) {
+            segmentDocs4(ImportDataConfig.CACHE_NAME_01);
+        }
     }
 
     public void segmentDocs4Cache2() {
-        segmentDocs4(ImportDataConfig.CACHE_NAME_02);
+        Boolean status=taskScheduledService.getStatus(jobType,ImportDataConfig.CACHE_NAME_02);
+        if(status) {
+            segmentDocs4(ImportDataConfig.CACHE_NAME_02);
+        }
     }
 
     public void segmentDocs4Cache3() {
-        segmentDocs4(ImportDataConfig.CACHE_NAME_03);
+        Boolean status=taskScheduledService.getStatus(jobType,ImportDataConfig.CACHE_NAME_03);
+        if(status) {
+            segmentDocs4(ImportDataConfig.CACHE_NAME_03);
+        }
     }
 
     public void segmentDocs4Cache4() {
-        segmentDocs4(ImportDataConfig.CACHE_NAME_04);
+        Boolean status=taskScheduledService.getStatus(jobType,ImportDataConfig.CACHE_NAME_04);
+        if(status) {
+            segmentDocs4(ImportDataConfig.CACHE_NAME_04);
+        }
     }
 
     public void segmentDocs4(final String cacheName) {

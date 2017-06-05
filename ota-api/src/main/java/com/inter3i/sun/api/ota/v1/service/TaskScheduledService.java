@@ -18,6 +18,9 @@ import java.util.Iterator;
 public class TaskScheduledService {
 
     private static final String PRIM_KEY_ID = "_id";
+    private static final String JOB_TYPE="jobType";
+    private static final String CACHE_NAME="cacheName";
+    private static final String STATUS="status";
     private MongoCollection collection = RepositoryFactory.getMongoClient("3idata", "task_schedule", "192.168.0.20", 40000);
 
     public TaskScheduledService() throws UnknownHostException {
@@ -26,8 +29,8 @@ public class TaskScheduledService {
 
     public Document findOne(String jobName, String cacheName) {
 
-        Bson filter1 = Filters.eq("jobName", jobName);
-        Bson filter2 = Filters.eq("cacheName", cacheName);
+        Bson filter1 = Filters.eq(JOB_TYPE, jobName);
+        Bson filter2 = Filters.eq(CACHE_NAME, cacheName);
         Bson bson = Filters.and(filter1, filter2);
         FindIterable iterable = collection.find(bson);
         Iterator<Document> iterator = iterable.iterator();
@@ -36,27 +39,38 @@ public class TaskScheduledService {
         }
         return null;
     }
+    public Boolean getStatus(String jobType, String cacheName) {
+        Document document=findOne(jobType,cacheName);
+        if(document==null){
+            return true;//默认开启
+        }
+        return document.getBoolean(STATUS);
+    }
 
-    public String insert(String jobName, String cacheName) {
+    public String insert(String jobType, String cacheName) {
+        Document docDB = findOne(jobType,cacheName);
+        if(docDB!=null){
+            return "Document is exist,jobType="+jobType+",cacheName="+cacheName;
+        }
         Document document = new Document();
-        document.put("jobName", jobName);
-        document.put("cacheName", cacheName);
-        document.put("status", true);
+        document.put(JOB_TYPE, jobType);
+        document.put(CACHE_NAME, cacheName);
+        document.put(STATUS, true);
         collection.insertOne(document);
         return "success";
     }
 
-    public String updateOne(String jobName, String cacheName, Boolean status) {
-        Document document = this.findOne(jobName, cacheName);
+    public String updateOne(String jobType, String cacheName, Boolean status) {
+        Document document = this.findOne(jobType, cacheName);
         if(document==null){
             return "Document is not exist";
         }
         Object idObj = document.get(PRIM_KEY_ID);
-        Bson filter = Filters.eq("_id", idObj);
+        Bson filter = Filters.eq(PRIM_KEY_ID, idObj);
         Document newDoc=new Document();
-        newDoc.put("jobName",jobName);
-        newDoc.put("cacheName",cacheName);
-        newDoc.put("status",status);
+        newDoc.put(JOB_TYPE,jobType);
+        newDoc.put(CACHE_NAME,cacheName);
+        newDoc.put(STATUS,status);
         collection.updateOne(filter, new Document("$set", newDoc));
         return "success";
     }
