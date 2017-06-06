@@ -41,8 +41,8 @@
         <!--<task:scheduled ref="importJob" method="importDoc2SolrFromCache1" cron="1 * * * * ?"/>-->
 
         <!-- 8071端口  -->
-        <task:scheduled ref="importJob" method="importDoc2SolrFromCache2" cron="0 0 2,5,8,23 * * ?"/>
-        <!--<task:scheduled ref="importJob" method="importDoc2SolrFromCache2" cron="1 * * * * ?"/>-->
+        <!--<task:scheduled ref="importJob" method="importDoc2SolrFromCache2" cron="0 0 2,5,8,23 * * ?"/>-->
+        <task:scheduled ref="importJob" method="importDoc2SolrFromCache2" cron="1 * * * * ?"/>
 
 
         <!--7011端口 -->
