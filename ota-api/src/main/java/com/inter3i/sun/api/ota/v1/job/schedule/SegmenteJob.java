@@ -31,10 +31,12 @@ public class SegmenteJob {
 
     private final String jobType="1";
 
+    private final String dataSourceNum="dataSource2";
+
     /*@Autowired
     private MongoDBServerConfig serverConfig;*/
 
-    private MongoDBServerConfig serverConfig = MongoDBServerConfig.getConfig("dataSource2");
+    private MongoDBServerConfig serverConfig = MongoDBServerConfig.getConfig(dataSourceNum);
 
     public void segmentDocs4Cache1() {
         Boolean status=taskScheduledService.getStatus(jobType,ImportDataConfig.CACHE_NAME_01);
