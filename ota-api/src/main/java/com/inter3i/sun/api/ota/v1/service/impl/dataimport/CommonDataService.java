@@ -28,7 +28,7 @@ public class CommonDataService implements ICommonDataService {
     private static final Logger logger = LoggerFactory.getLogger(CommonDataService.class);
 
     public void savaCommonData(final String cacheName, final CommonData commonData, final MongoDBServerConfig serverConfig) throws UnknownHostException {
-        if (null == commonData || null == commonData.getJsonDocStr() || 0 == commonData.getJsonDocStr().length()) {
+        if (null == commonData || null == commonData.getJsonDoc() || 0 == commonData.getJsonDoc().size()) {
             logger.warn("--+-savaCommonData into mongoDB failed,Data is null.");
             return;
         }
@@ -53,10 +53,10 @@ public class CommonDataService implements ICommonDataService {
 
     private Document converBean2Doc(CommonData commonData) {
         Document mogoDbBean = new Document();
-        mogoDbBean.put("jsonDocStr", commonData.getJsonDocStr());
         mogoDbBean.put("importStatus", commonData.getImportStatus());
         mogoDbBean.put("segmentedStatus", commonData.getImportStatus());
         mogoDbBean.put("cacheDataTime", commonData.getCacheDataTime());
+        mogoDbBean.put("jsonDoc", commonData.getJsonDoc());
         return mogoDbBean;
     }
 }

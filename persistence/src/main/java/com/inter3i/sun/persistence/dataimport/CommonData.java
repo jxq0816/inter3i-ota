@@ -14,7 +14,7 @@ package com.inter3i.sun.persistence.dataimport;
 import com.inter3i.sun.persistence.Entity;
 import lombok.Data;
 
-import java.util.List;
+import java.util.Map;
 
 @Data
 public class CommonData extends Entity {
@@ -29,9 +29,8 @@ public class CommonData extends Entity {
     public static final int SEGMENTE_SATUS_EXCEPTION = 3;
     public static final int SEGMENTE_SATUS_OUT_SIZE = 4;
 
+    private Map jsonDoc;
 
-    private String jsonDocStr;
-    //入库状态
     private int importStatus;
 
     //是否已经分词

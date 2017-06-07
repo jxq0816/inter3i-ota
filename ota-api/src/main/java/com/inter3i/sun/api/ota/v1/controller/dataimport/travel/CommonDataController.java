@@ -21,8 +21,10 @@ import com.inter3i.sun.persistence.dataimport.CommonData;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @RestController("/DocCache")
 @RequestMapping("/DocCache")
@@ -98,12 +100,25 @@ public class CommonDataController {
             logger.debug("Import common document for Cache:" + cacheServerName + "] requestDoc: " + requestDataStr);
             //校验当前的缓存是否合法 PHP端不能随意指定cacheName,指定的cacheName必须在配置文件中进行配置
             serverConfig.validateCacheName(cacheServerName);
+            com.alibaba.fastjson.JSONObject o = com.alibaba.fastjson.JSONObject.parseObject(requestDataStr);
+//            Object datas = o.get("datas");
+//            String s = com.alibaba.fastjson.JSONObject.toJSONString(datas);
+
+            Map JsonDocx = new HashMap();
+            JsonDocx.put("sourceid", o.get("sourceid"));
+            JsonDocx.put("currentHost", o.get("currentHost"));
+            JsonDocx.put("dictPlan", o.get("dictPlan"));
+            JsonDocx.put("taskParam", o.get("taskParam"));
+            JsonDocx.put("taskId", o.get("taskId"));
+            JsonDocx.put("currentPort", o.get("currentPort"));
+            JsonDocx.put("datas", o.get("datas"));
+
 
             CommonData commonData = new CommonData();
-            commonData.setJsonDocStr(requestDataStr);
             commonData.setImportStatus(CommonData.IMPORTSTATUS_NO_IMPORT);
             commonData.setSegmentedStatus(CommonData.SEGMENTE_SATUS_NO);
             commonData.setCacheDataTime(System.currentTimeMillis());
+            commonData.setJsonDoc(JsonDocx);
 
             if (OPERATE_TYPE_INSERT.equals(type)) {
                 commonDataService.savaCommonData(cacheServerName, commonData, serverConfig);

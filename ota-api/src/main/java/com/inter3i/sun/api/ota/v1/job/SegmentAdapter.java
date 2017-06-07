@@ -89,7 +89,7 @@ public class SegmentAdapter {
                     taskData = iterator.next();
 
                     try {
-                        docStr = (String) taskData.get("jsonDocStr");
+                        docStr = taskData.get("jsonDoc").toString();
                         //add by wangcc mongo中限制文档的最大大小不能超过16M 在这里考虑到分词以后的term 这里限制8M
                         if (docStr.getBytes(Charset.forName("utf8")).length >= 2000000) {
                             taskData.put("segmentedStatus", CommonData.SEGMENTE_SATUS_OUT_SIZE);
@@ -157,7 +157,9 @@ public class SegmentAdapter {
             //TODO 1. 是否需要对文章进行字段补全 即从solr中查询该篇文章的个别字段 因为solr中不支持增量更新???
             //TODO 2.补全非原创文章的情感字段(根据retweeted_guid字段从mysql中获取原创的情感字段)?? orig_emotion orig_business orig_emoBusiness
 
-            JSONObject taskDataJson = new JSONObject((String) commonData.get("jsonDocStr"));
+            Document taskData = (Document) commonData.get("jsonDoc");
+            String taskDataStr = taskData.toJson();
+            JSONObject taskDataJson = new JSONObject(taskDataStr);
             JSONArray dictPlan = null;
             Object dictPlanTmp = taskDataJson.get("dictPlan");
             if (dictPlanTmp instanceof String && ((String) dictPlanTmp).equals("[[]]")) {
@@ -299,7 +301,8 @@ public class SegmentAdapter {
             }
 
             long endTime = System.currentTimeMillis();
-            commonData.put("jsonDocStr", taskDataJson.toString());
+            com.alibaba.fastjson.JSONObject dataJson = com.alibaba.fastjson.JSONObject.parseObject(taskDataJson.toString());
+            commonData.put("jsonDoc", dataJson);
             logger.info("Job:[SegmenteJob] --+-doSegmentFromNLP for taskdata in:[" + this.cacheName + "] success. Spend:[" + (endTime - startTime) + "] ms.");
         } catch (Exception e) {
             e.printStackTrace();
