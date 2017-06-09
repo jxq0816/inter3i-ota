@@ -301,7 +301,7 @@ public class SegmentAdapter {
             }
 
             long endTime = System.currentTimeMillis();
-            com.alibaba.fastjson.JSONObject dataJson = com.alibaba.fastjson.JSONObject.parseObject(taskDataJson.toString());
+            Document dataJson=Document.parse(taskDataJson.toString());
             commonData.put("jsonDoc", dataJson);
             logger.info("Job:[SegmenteJob] --+-doSegmentFromNLP for taskdata in:[" + this.cacheName + "] success. Spend:[" + (endTime - startTime) + "] ms.");
         } catch (Exception e) {
