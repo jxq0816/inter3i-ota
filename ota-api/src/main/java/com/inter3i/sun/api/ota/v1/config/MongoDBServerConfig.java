@@ -17,37 +17,49 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PropertiesLoaderUtils;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Properties;
+import java.io.IOException;
+import java.util.*;
 
 /*@Configuration
 @ConfigurationProperties(prefix = "di")
 *//*@PropertySource("classpath:importdata.properties")*//*
 @PropertySource("file:D:/tmp/config/importdata.properties")*/
 public class MongoDBServerConfig {
-    private static MongoDBServerConfig instance = null;
+    private static Resource resource = new ClassPathResource("/importdata.properties");
+
+    public static MongoDBServerConfig getConfigByDataSourceName(String dataSourceName) {
+        Properties props = null;
+        try {
+            props = PropertiesLoaderUtils.loadProperties(resource);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        Set<Map.Entry<Object, Object>> set = props.entrySet();
+        for (Map.Entry<Object, Object> m : set) {
+            if(m.getValue().equals(dataSourceName)){
+                String key=(String)m.getKey();
+                String[] array=key.split("\\.");
+                String dataSourceNum=array[array.length-1];
+                MongoDBServerConfig config=getConfig(dataSourceNum);
+                return config;
+            }
+        }
+        return null;
+    }
 
     public static MongoDBServerConfig getConfig(String dataSourceNum) {
         String dbNameKey="di.dbName."+dataSourceNum;
         String ipKey="di.mongoDBIp."+dataSourceNum;
         String portKey="di.mongoDBPort."+dataSourceNum;
-
-        if (instance != null) {
-            return instance;
-        }
+        String userNameKey="di.dbAuth.userName."+dataSourceNum;
+        String passwordKey="di.dbAuth.password."+dataSourceNum;
 
         synchronized (MongoDBServerConfig.class) {
-            if (instance != null) {
-                return instance;
-            }
 
             //初始化该配置类
             MongoDBServerConfig tmp = null;
             try {
                 tmp = new MongoDBServerConfig();
-                Resource resource = new ClassPathResource("/importdata.properties");
                 Properties props = PropertiesLoaderUtils.loadProperties(resource);
                 Iterator it = props.keySet().iterator();
                 String key;
@@ -93,7 +105,15 @@ public class MongoDBServerConfig {
                         tmp.setDbName((String) props.get(key));
                     }else if(portKey.equals(key)){
                         tmp.setMongoDBPort(Integer.valueOf((String) props.get(key)));
-                    }else if (key.startsWith("di.cacheTableMap[")) {
+                    }else if (key.equals(userNameKey)) {
+                        //提取用户名
+                        String dbName = getKeyInLastSpliteTerm(key, ".");
+                        tmp.addAuthUserName4(dbName, (String) props.get(key));
+                    } else if (key.equals(passwordKey)) {
+                        //提取密码
+                        String dbName = getKeyInLastSpliteTerm(key, ".");
+                        tmp.addAuthPassword4(dbName, (String) props.get(key));
+                    } else if (key.startsWith("di.cacheTableMap[")) {
                         tmp.cacheNameCacheDescMap.put(getKeyIn(key), (String) props.get(key));
                     } else if (key.startsWith("di.cachePortMap[")) {
                         tmp.add4CachePortMap(getKeyIn(key), Integer.valueOf((String) props.get(key)));
@@ -101,21 +121,12 @@ public class MongoDBServerConfig {
                         tmp.cacheNameDataTableMap.put(getKeyIn(key), (String) props.get(key));
                     } else if (key.startsWith("di.cacheSplTables[")) {
                         tmp.add4CacheSplTables(getKeyIn(key), (String) props.get(key));
-                    } else if (key.startsWith("di.dbAuth.userName.")) {
-                        //提取用户名
-                        String dbName = getKeyInLastSpliteTerm(key, ".");
-                        tmp.addAuthUserName4(dbName, (String) props.get(key));
-                    } else if (key.startsWith("di.dbAuth.password.")) {
-                        //提取密码
-                        String dbName = getKeyInLastSpliteTerm(key, ".");
-                        tmp.addAuthPassword4(dbName, (String) props.get(key));
                     }
                 }
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            instance = tmp;
-            return instance;
+            return tmp;
         }
     }
 
