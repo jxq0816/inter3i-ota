@@ -24,9 +24,10 @@ import org.springframework.web.bind.annotation.*;
 @RestController("/datacommit")
 @RequestMapping("/data")
 public class ImportDataController {
+    //分词结束以后入mongo
     private static final Logger logger = LoggerFactory.getLogger(CommonDataController.class);
 
-    private MongoDBServerConfig serverConfig = MongoDBServerConfig.getConfigByDataSourceName("import");
+    private MongoDBServerConfig serverConfig = MongoDBServerConfig.getConfigByDataSourceName("export");
 
     /*private static final Runnable innerThread = () -> {
         while (true) {

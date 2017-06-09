@@ -26,8 +26,15 @@ import java.util.*;
 @PropertySource("file:D:/tmp/config/importdata.properties")*/
 public class MongoDBServerConfig {
     private static Resource resource = new ClassPathResource("/importdata.properties");
+    private static Map configMap=new HashMap();
 
     public static MongoDBServerConfig getConfigByDataSourceName(String dataSourceName) {
+        MongoDBServerConfig rs=(MongoDBServerConfig)configMap.get(dataSourceName);
+        if(rs!=null){
+            return rs;
+        }
+
+
         Properties props = null;
         try {
             props = PropertiesLoaderUtils.loadProperties(resource);
@@ -41,6 +48,7 @@ public class MongoDBServerConfig {
                 String[] array=key.split("\\.");
                 String dataSourceNum=array[array.length-1];
                 MongoDBServerConfig config=getConfig(dataSourceNum);
+                configMap.put(dataSourceName,config);
                 return config;
             }
         }

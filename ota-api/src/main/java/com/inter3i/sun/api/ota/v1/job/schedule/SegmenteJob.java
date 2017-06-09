@@ -31,12 +31,12 @@ public class SegmenteJob {
 
     private final String jobType="1";
 
-    private final String dataSourceName="export";
+    //private final String dataSourceName="export";
 
     /*@Autowired
     private MongoDBServerConfig serverConfig;*/
 
-    private MongoDBServerConfig serverConfig = MongoDBServerConfig.getConfigByDataSourceName(dataSourceName);
+    private MongoDBServerConfig serverConfig = MongoDBServerConfig.getConfigByDataSourceName("export");
 
     public void segmentDocs4Cache1() {
         Boolean status=taskScheduledService.getStatus(jobType,ImportDataConfig.CACHE_NAME_01);

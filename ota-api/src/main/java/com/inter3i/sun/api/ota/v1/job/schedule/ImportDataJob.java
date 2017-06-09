@@ -30,14 +30,14 @@ public class ImportDataJob {
 
     private final String jobType="0";
 
-    private final String dataSourceName="import";
+    //private final String dataSourceName="import";
 
     private static final Logger logger = LoggerFactory.getLogger(ImportDataJob.class);
 
    /* @Autowired
     private MongoDBServerConfig serverConfig;*/
 
-    private MongoDBServerConfig serverConfig = MongoDBServerConfig.getConfigByDataSourceName(dataSourceName);
+    private MongoDBServerConfig serverConfig = MongoDBServerConfig.getConfigByDataSourceName("export");
 
     public void importDoc2SolrFromCache1() {
         Boolean status=taskScheduledService.getStatus(jobType,ImportDataConfig.CACHE_NAME_01);
