@@ -31,12 +31,12 @@ public class SegmenteJob {
 
     private final String jobType="1";
 
-    //private final String dataSourceName="export";
+    private final String dataSourceName="export";
 
     /*@Autowired
     private MongoDBServerConfig serverConfig;*/
 
-    private MongoDBServerConfig serverConfig = MongoDBServerConfig.getConfigByDataSourceName("export");
+    private MongoDBServerConfig serverConfig = MongoDBServerConfig.getConfigByDataSourceName(dataSourceName);
 
     public void segmentDocs4Cache1() {
         Boolean status=taskScheduledService.getStatus(jobType,ImportDataConfig.CACHE_NAME_01);
@@ -68,10 +68,10 @@ public class SegmenteJob {
 
     public void segmentDocs4(final String cacheName) {
         String collectName = serverConfig.getDataTableNameBy(cacheName);
-        logger.info("Job:[segmentData] for cacheName:[" + cacheName + "] from collect:[" + collectName + "] start. DBServerIP:[" + serverConfig.getMongoDBIp() + "] DBServerPort:[" + serverConfig.getMongoDBPort() + "]  ... ");
+        logger.info("Job:[segmentData] for cacheName:[" + cacheName + "]  from datasource:["+dataSourceName+"] from collect:[" + collectName + "] start. DBServerIP:[" + serverConfig.getMongoDBIp() + "] DBServerPort:[" + serverConfig.getMongoDBPort() + "]  ... ");
         SegmentAdapter segmentAdapter = new SegmentAdapter(serverConfig, cacheName, ImportDataConfig.DBClinetHolder.getInstance(serverConfig).getDataCollectionBy(cacheName));
         segmentAdapter.doSegment4Docs();
-        logger.info("Job:[segmentData] for cacheName:[" + cacheName + "] from collect:[" + collectName + "] run complete. DBServerIP:[" + serverConfig.getMongoDBIp() + "] DBServerPort:[" + serverConfig.getMongoDBPort() + "].");
+        logger.info("Job:[segmentData] for cacheName:[" + cacheName + "] from datasource:["+dataSourceName+"] from collect:[" + collectName + "] run complete. DBServerIP:[" + serverConfig.getMongoDBIp() + "] DBServerPort:[" + serverConfig.getMongoDBPort() + "].");
     }
 
 }
