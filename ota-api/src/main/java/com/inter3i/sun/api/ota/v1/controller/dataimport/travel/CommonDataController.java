@@ -16,6 +16,7 @@ import com.inter3i.sun.api.ota.v1.config.MongoDBServerConfig;
 import com.inter3i.sun.api.ota.v1.service.ServiceFactory;
 import com.inter3i.sun.api.ota.v1.service.dataimport.ICommonDataService;
 import com.inter3i.sun.api.ota.v1.util.TimeStatisticUtil;
+import com.inter3i.sun.api.ota.v1.util.ValidateUtils;
 import com.inter3i.sun.persistence.NonSupportException;
 import com.inter3i.sun.persistence.dataimport.CommonData;
 import org.bson.Document;
@@ -23,6 +24,8 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.ArrayList;
 
 @RestController("/DocCache")
 @RequestMapping("/DocCache")
@@ -35,6 +38,7 @@ public class CommonDataController {
 
     private final ICommonDataService commonDataService;
 
+    final static String CHECK_FIELDS[] = new String[]{"column", "column1", "page_url", "original_url", "floor"};
    /* @Autowired
     private MongoDBServerConfig serverConfig;*/
 
@@ -100,6 +104,16 @@ public class CommonDataController {
             serverConfig.validateCacheName(cacheServerName);
 
             Document doc = Document.parse(requestDataStr);
+            ArrayList DocDatas = (ArrayList) doc.get("datas");
+            for (int i1 = 0; i1 < DocDatas.size(); i1++) {
+                Document DocData = (Document) DocDatas.get(i1);
+                for (int i = 0; i < CHECK_FIELDS.length; i++) {
+                    if (ValidateUtils.isNullOrEmpt(DocData.get(CHECK_FIELDS[i]))) {
+                        logger.error("Import document exception: the field [ " + CHECK_FIELDS[i] + " ] is null.");
+                        throw new RuntimeException(" Import document exception: the field [" + CHECK_FIELDS[i] + " ] is null.");
+                    }
+                }
+            }
 
             CommonData commonData = new CommonData();
             commonData.setImportStatus(CommonData.IMPORTSTATUS_NO_IMPORT);
