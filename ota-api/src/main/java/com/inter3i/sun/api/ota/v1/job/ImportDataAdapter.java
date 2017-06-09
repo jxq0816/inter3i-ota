@@ -122,9 +122,9 @@ public class ImportDataAdapter {
 //            }
 
                     //查询出所有的没有入库以及分词成功的文章
-                    Bson fileter1 = Filters.eq("importStatus", CommonData.IMPORTSTATUS_NO_IMPORT); //没有入库
-                    //Bson fileter2 = Filters.eq("segmentedStatus", CommonData.SEGMENTE_SATUS_SUCCESS);//分词成功
-                    Bson conds = Filters.and(fileter1);
+                    Bson filter1 = Filters.eq("importStatus", CommonData.IMPORTSTATUS_NO_IMPORT); //没有入库
+                    Bson filter2 = Filters.eq("segmentedStatus", CommonData.SEGMENTE_SATUS_SUCCESS);//分词成功
+                    Bson conds = Filters.and(filter1,filter2);
                     //没有分词
                     FindIterable iterable = dbDataCollection.find(conds);
 

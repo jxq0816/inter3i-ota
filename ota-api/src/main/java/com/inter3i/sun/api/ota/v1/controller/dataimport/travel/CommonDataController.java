@@ -37,7 +37,7 @@ public class CommonDataController {
     private static final String OPERATE_TYPE_INSERT = "insert";
 
     private final ICommonDataService commonDataService;
-
+    //需要校验非空的字段
     final static String CHECK_FIELDS[] = new String[]{"column", "column1", "page_url", "original_url", "floor"};
    /* @Autowired
     private MongoDBServerConfig serverConfig;*/
@@ -97,7 +97,6 @@ public class CommonDataController {
 //        private String errorMsg;
         JSONObject responseData = new JSONObject();
         try {
-            //JSONObject jsonObject = new JSONObject(requestDataStr);
             responseData.put("success", true);
             logger.debug("Import common document for Cache:" + cacheServerName + "] requestDoc: " + requestDataStr);
             //校验当前的缓存是否合法 PHP端不能随意指定cacheName,指定的cacheName必须在配置文件中进行配置
@@ -105,6 +104,7 @@ public class CommonDataController {
 
             Document doc = Document.parse(requestDataStr);
             ArrayList DocDatas = (ArrayList) doc.get("datas");
+            //非空校验
             for (int i1 = 0; i1 < DocDatas.size(); i1++) {
                 Document DocData = (Document) DocDatas.get(i1);
                 for (int i = 0; i < CHECK_FIELDS.length; i++) {
