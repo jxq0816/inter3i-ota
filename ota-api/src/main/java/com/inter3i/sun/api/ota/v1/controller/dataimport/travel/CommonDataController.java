@@ -11,7 +11,8 @@
 
 package com.inter3i.sun.api.ota.v1.controller.dataimport.travel;
 
-import com.inter3i.sun.api.ota.v1.config.ImportDataConfig;
+import com.inter3i.sun.api.ota.v1.config.DataConfig;
+import com.inter3i.sun.api.ota.v1.config.JobConfig;
 import com.inter3i.sun.api.ota.v1.config.MongoDBServerConfig;
 import com.inter3i.sun.api.ota.v1.service.ServiceFactory;
 import com.inter3i.sun.api.ota.v1.service.dataimport.ICommonDataService;
@@ -45,6 +46,7 @@ public class CommonDataController {
     private MongoDBServerConfig serverConfig;*/
 
     private MongoDBServerConfig serverConfig = MongoDBServerConfig.getConfigByDataSourceName("import");
+    private JobConfig jobConfig = JobConfig.getConfig();
 
 
     CommonDataController() {
@@ -56,14 +58,14 @@ public class CommonDataController {
     @ResponseBody
     String health() {
         //return "Green!";
-        TimeStatisticUtil.TimeInfo timeInfo = TimeStatisticUtil.getTimeInof(serverConfig.getDataImportUrl(ImportDataConfig.CACHE_NAME_01));
+        TimeStatisticUtil.TimeInfo timeInfo = TimeStatisticUtil.getTimeInof(serverConfig.getDataImportUrl(DataConfig.CACHE_NAME_01));
         return timeInfo.toString();
     }
 
     @RequestMapping("/clearn")
     public void clearn() {
         //return "Green!";
-        TimeStatisticUtil.removeByKey(serverConfig.getDataImportUrl(ImportDataConfig.CACHE_NAME_01));
+        TimeStatisticUtil.removeByKey(serverConfig.getDataImportUrl(DataConfig.CACHE_NAME_01));
     }
 
     /*@RequestMapping(value = "/cachedoc", method = {RequestMethod.GET, RequestMethod.POST})
@@ -124,7 +126,7 @@ public class CommonDataController {
             commonData.setJsonDoc(doc);
 
             if (OPERATE_TYPE_INSERT.equals(type)) {
-                commonDataService.savaCommonData(cacheServerName, commonData, serverConfig);
+                commonDataService.savaCommonData(cacheServerName, commonData, serverConfig,jobConfig);
             } else {
                 throw new NonSupportException("unsupported type:[" + type + "] for controller:[CommonDataController]");
             }

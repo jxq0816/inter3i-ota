@@ -20,8 +20,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-public class ImportDataConfig {
-    private static final Logger logger = LoggerFactory.getLogger(ImportDataConfig.class);
+public class DataConfig {
+    private static final Logger logger = LoggerFactory.getLogger(DataConfig.class);
 
     public static final String TABLE_NAME_PRODUCT = "product";
     public static final String TABLE_NAME_PRODCT_COMMET = "product";
@@ -70,7 +70,7 @@ public class ImportDataConfig {
         private DBClinetHolder() {
         }
 
-        public static DBClinetHolder getInstance(final MongoDBServerConfig serverConfig) {
+        public static DBClinetHolder getInstance(final MongoDBServerConfig serverConfig,String jobName) {
             if (instance != null) {
                 return instance;
             }
@@ -79,7 +79,7 @@ public class ImportDataConfig {
                     return instance;
                 }
                 DBClinetHolder tmp = new DBClinetHolder();
-                tmp.initConfig(serverConfig);
+                tmp.initConfig(serverConfig,jobName);
                 instance = tmp;
                 return instance;
             }
@@ -88,11 +88,11 @@ public class ImportDataConfig {
 
         //初始话数据库连接
 
-        public void initConfig(final MongoDBServerConfig serverConfig) {
+        public void initConfig(final MongoDBServerConfig serverConfig,String jobName) {
             try {
                 logger.info("init all mongoDB config:" + serverConfig.toString());
 
-                Iterator<String> allCacheNames =JobConfig.getConfig().getAllCacheNames("import");
+                Iterator<String> allCacheNames =JobConfig.getConfig().getAllCacheNames(jobName);
                 MongoCollection dbCollection = null;
                 String cacheName = null;
                 String dbName = null;
@@ -104,12 +104,12 @@ public class ImportDataConfig {
                     dbAuth = serverConfig.getDBAuthBy(dbName);
 
                     if (null != dbAuth) {
-                        dbCollection = RepositoryFactory.getMongoClient(dbName, JobConfig.getConfig().getDataTableNameBy(cacheName,"import"), dbAuth.getUserName(), dbAuth.getPassword(), serverConfig.getMongoDBIp(), serverConfig.getMongoDBPort());
+                        dbCollection = RepositoryFactory.getMongoClient(dbName, JobConfig.getConfig().getDataTableNameBy(cacheName,jobName), dbAuth.getUserName(), dbAuth.getPassword(), serverConfig.getMongoDBIp(), serverConfig.getMongoDBPort());
                         cacheDatatTables.put(cacheName, dbCollection);
                         supplyDocTables.put(cacheName, dbCollection);
 
                     } else {
-                        dbCollection = RepositoryFactory.getMongoClient(dbName, JobConfig.getConfig().getDataTableNameBy(cacheName,"import"), serverConfig.getMongoDBIp(), serverConfig.getMongoDBPort());
+                        dbCollection = RepositoryFactory.getMongoClient(dbName, JobConfig.getConfig().getDataTableNameBy(cacheName,jobName), serverConfig.getMongoDBIp(), serverConfig.getMongoDBPort());
                         cacheDatatTables.put(cacheName, dbCollection);
                         supplyDocTables.put(cacheName, dbCollection);
                     }

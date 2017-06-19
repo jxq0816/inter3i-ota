@@ -11,7 +11,8 @@
 
 package com.inter3i.sun.api.ota.v1.job.schedule;
 
-import com.inter3i.sun.api.ota.v1.config.ImportDataConfig;
+import com.inter3i.sun.api.ota.v1.config.DataConfig;
+import com.inter3i.sun.api.ota.v1.config.JobConfig;
 import com.inter3i.sun.api.ota.v1.config.MongoDBServerConfig;
 import com.inter3i.sun.api.ota.v1.job.SegmentAdapter;
 import com.inter3i.sun.api.ota.v1.service.TaskScheduledService;
@@ -39,37 +40,38 @@ public class SegmenteJob {
     private MongoDBServerConfig serverConfig = MongoDBServerConfig.getConfigByDataSourceName(dataSourceName);
 
     public void segmentDocs4Cache1() {
-        Boolean status=taskScheduledService.getStatus(jobType,ImportDataConfig.CACHE_NAME_01);
+        Boolean status=taskScheduledService.getStatus(jobType, DataConfig.CACHE_NAME_01);
         if(status) {
-            segmentDocs4(ImportDataConfig.CACHE_NAME_01);
+            segmentDocs4(DataConfig.CACHE_NAME_01);
         }
     }
 
     public void segmentDocs4Cache2() {
-        Boolean status=taskScheduledService.getStatus(jobType,ImportDataConfig.CACHE_NAME_02);
+        Boolean status=taskScheduledService.getStatus(jobType,DataConfig.CACHE_NAME_02);
         if(status) {
-            segmentDocs4(ImportDataConfig.CACHE_NAME_02);
+            segmentDocs4(DataConfig.CACHE_NAME_02);
         }
     }
 
     public void segmentDocs4Cache3() {
-        Boolean status=taskScheduledService.getStatus(jobType,ImportDataConfig.CACHE_NAME_03);
+        Boolean status=taskScheduledService.getStatus(jobType,DataConfig.CACHE_NAME_03);
         if(status) {
-            segmentDocs4(ImportDataConfig.CACHE_NAME_03);
+            segmentDocs4(DataConfig.CACHE_NAME_03);
         }
     }
 
     public void segmentDocs4Cache4() {
-        Boolean status=taskScheduledService.getStatus(jobType,ImportDataConfig.CACHE_NAME_04);
+        Boolean status=taskScheduledService.getStatus(jobType,DataConfig.CACHE_NAME_04);
         if(status) {
-            segmentDocs4(ImportDataConfig.CACHE_NAME_04);
+            segmentDocs4(DataConfig.CACHE_NAME_04);
         }
     }
 
     public void segmentDocs4(final String cacheName) {
-        String collectName = serverConfig.getDataTableNameBy(cacheName);
+        String collectName = JobConfig.getConfig().getDataTableNameBy(cacheName,"segment");
+
         logger.info("Job:[segmentData] for cacheName:[" + cacheName + "]  from datasource:["+dataSourceName+"] from collect:[" + collectName + "] start. DBServerIP:[" + serverConfig.getMongoDBIp() + "] DBServerPort:[" + serverConfig.getMongoDBPort() + "]  ... ");
-        SegmentAdapter segmentAdapter = new SegmentAdapter(serverConfig, cacheName, ImportDataConfig.DBClinetHolder.getInstance(serverConfig).getDataCollectionBy(cacheName));
+        SegmentAdapter segmentAdapter = new SegmentAdapter(serverConfig, cacheName, DataConfig.DBClinetHolder.getInstance(serverConfig,"segment").getDataCollectionBy(cacheName));
         segmentAdapter.doSegment4Docs();
         logger.info("Job:[segmentData] for cacheName:[" + cacheName + "] from datasource:["+dataSourceName+"] from collect:[" + collectName + "] run complete. DBServerIP:[" + serverConfig.getMongoDBIp() + "] DBServerPort:[" + serverConfig.getMongoDBPort() + "].");
     }

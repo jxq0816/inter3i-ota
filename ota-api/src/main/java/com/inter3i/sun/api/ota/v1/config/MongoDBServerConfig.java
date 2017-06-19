@@ -168,34 +168,6 @@ public class MongoDBServerConfig {
     private int importNumPerFlush;
     private Map<String, Integer> cachePortMap = new HashMap<>(4);
 
-    /**
-     * 根据不同的配置 查找缓存对应的数据库表：数据表
-     */
-    private Map<String, String> cacheNameDataTableMap = new HashMap<>(4);
-
-
-    public Iterator<String> getAllCacheNames() {
-        return cacheNameDataTableMap.keySet().iterator();
-    }
-
-    /**
-     * 所有的缓存名称 ---> 描述的 映射
-     */
-    private Map<String, String> cacheNameCacheDescMap = new HashMap<>(4);
-
-    public String getDataTableNameBy(final String cacheName) {
-        validateCacheNameDataTables(cacheName);
-        return cacheNameDataTableMap.get(cacheName);
-    }
-
-    private void validateCacheNameDataTables(final String cacheName) {
-        if (ValidateUtils.isNullOrEmpt(this.cacheNameDataTableMap)) {
-            throw new RuntimeException("cache name <===> dataTable mapping is empety!");
-        }
-        if (!cacheNameDataTableMap.containsKey(cacheName)) {
-            throw new RuntimeException("dataTable name for cacheName:[" + cacheName + "] is null.");
-        }
-    }
 
     public DBAuth getDBAuthBy(final String dbName) {
         if (!dbAuths.containsKey(dbName)) {
@@ -268,11 +240,6 @@ public class MongoDBServerConfig {
 
     public void setMongoDBIp(String mongoDBIp) {
         this.mongoDBIp = mongoDBIp;
-    }
-
-
-    public void add4CacheSplTables(String key, String value) {
-        cacheSplTables.put(key, value);
     }
 
     public int getMongoDBPort() {
@@ -401,13 +368,6 @@ public class MongoDBServerConfig {
                 + flushPath + "?cacheName=" + serverCacheName;
     }
 
-    //    public String getFlushURL4DataStorege(final String serverCacheName) {
-    //        if (ValidateUtils.isNullOrEmpt(this.cacheDataTables) || !cacheDataTables.containsKey(serverCacheName)) {
-    //            throw new RuntimeException("cache name not exist! CacheName:[" + serverCacheName + "].");
-    //        }
-    //        return HttpUtils.HTTP_PROTOCAL_PREFIX + this.dataStorageServerIp + ":" + dataStorageServerPort + dataStorageSolrFlushPath + "?cacheName=" + serverCacheName;
-    //    }
-
     public String getSupplyIdUrl(final String serverCacheName) {
         //        validateCacheName(serverCacheName);
         //        return HttpUtils.HTTP_PROTOCAL_PREFIX + this.webServerIp + ":" + cachePortMap.get(serverCacheName) + supplyPath;
@@ -423,25 +383,5 @@ public class MongoDBServerConfig {
         }
     }
 
-    /**
-     * 根据不同的配置 查找缓存对应的数据库表：supplyDoc表
-     *
-     * @param cacheName
-     * @return
-     */
-    private Map<String, String> cacheSplTables = new HashMap<>(4);
 
-    public String geSplTableNamesBy(final String cacheName) {
-        validateCacheNameSplTables(cacheName);
-        return this.cacheSplTables.get(cacheName);
-    }
-
-    private void validateCacheNameSplTables(final String cacheName) {
-        if (ValidateUtils.isNullOrEmpt(this.cacheSplTables)) {
-            throw new RuntimeException("cache name <===> dataTable mapping is empety!");
-        }
-        if (!cacheSplTables.containsKey(cacheName)) {
-            throw new RuntimeException("dataTable name for cacheName:[" + cacheName + "] is null.");
-        }
-    }
 }

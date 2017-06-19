@@ -12,7 +12,7 @@
 package com.inter3i.sun.api.ota.v1.controller.dataimport;
 
 
-import com.inter3i.sun.api.ota.v1.config.ImportDataConfig;
+import com.inter3i.sun.api.ota.v1.config.DataConfig;
 import com.inter3i.sun.api.ota.v1.config.MongoDBServerConfig;
 import com.inter3i.sun.api.ota.v1.controller.dataimport.travel.CommonDataController;
 import com.inter3i.sun.api.ota.v1.job.ImportDataAdapter;
@@ -26,6 +26,7 @@ import org.springframework.web.bind.annotation.*;
 public class ImportDataController {
     //分词结束以后入mongo
     private static final Logger logger = LoggerFactory.getLogger(CommonDataController.class);
+    private static final String jobName="import";
     private static final String dataSourceName="export";
 
     private MongoDBServerConfig serverConfig = MongoDBServerConfig.getConfigByDataSourceName(dataSourceName);
@@ -66,7 +67,7 @@ public class ImportDataController {
 //                        while (true) {
 //                            System.out.println("import ... ");
 //                        }
-                        ImportDataAdapter importDataAdapter = new ImportDataAdapter(cacheName, ImportDataConfig.DBClinetHolder.getInstance(serverConfig).getDataCollectionBy(cacheName), ImportDataConfig.DBClinetHolder.getInstance(serverConfig).getSplCollectionBy(cacheName), serverConfig, false);
+                        ImportDataAdapter importDataAdapter = new ImportDataAdapter(cacheName, DataConfig.DBClinetHolder.getInstance(serverConfig,jobName).getDataCollectionBy(cacheName), DataConfig.DBClinetHolder.getInstance(serverConfig,jobName).getSplCollectionBy(cacheName), serverConfig, false);
                         importDataAdapter.importDoc2Solr();
                     } finally {
                         ImportDataAdapter.getLockBy(cacheName).runComplete();
