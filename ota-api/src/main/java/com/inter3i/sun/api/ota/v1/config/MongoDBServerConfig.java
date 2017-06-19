@@ -121,14 +121,8 @@ public class MongoDBServerConfig {
                         //提取密码
                         String dbName = getKeyInLastSpliteTerm(key, ".");
                         tmp.addAuthPassword4(dbName, (String) props.get(key));
-                    } else if (key.startsWith("di.cacheTableMap[")) {
-                        tmp.cacheNameCacheDescMap.put(getKeyIn(key), (String) props.get(key));
-                    } else if (key.startsWith("di.cachePortMap[")) {
+                    }  else if (key.startsWith("di.cachePortMap[")) {
                         tmp.add4CachePortMap(getKeyIn(key), Integer.valueOf((String) props.get(key)));
-                    } else if (key.startsWith("di.cacheDataTables[")) {
-                        tmp.cacheNameDataTableMap.put(getKeyIn(key), (String) props.get(key));
-                    } else if (key.startsWith("di.cacheSplTables[")) {
-                        tmp.add4CacheSplTables(getKeyIn(key), (String) props.get(key));
                     }
                 }
             } catch (Exception e) {
