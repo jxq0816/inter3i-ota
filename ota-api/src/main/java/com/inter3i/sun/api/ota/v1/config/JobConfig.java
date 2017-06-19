@@ -25,13 +25,22 @@ public class JobConfig {
 
     private static Resource resource = new ClassPathResource("/jobconfig.properties");
     /**
-     * 所有的缓存名称 ---> 描述的 映射
+     * 入库所有的缓存名称 ---> 描述的 映射
      */
-    private Map<String, String> cacheNameCacheDescMap = new HashMap<>(4);
+    private static Map<String, String> importCacheNameCacheDescMap = new HashMap<>(4);
     /**
-     * 根据不同的配置 查找缓存对应的数据库表：数据表
+     * 入库根据不同的配置 查找缓存对应的数据库表：数据表
      */
-    private Map<String, String> cacheNameDataTableMap = new HashMap<>(4);
+    private static Map<String, String> importCacheNameDataTableMap = new HashMap<>(4);
+
+    /**
+     * 分词所有的缓存名称 ---> 描述的 映射
+     */
+    private static Map<String, String> segmentCacheNameCacheDescMap = new HashMap<>(4);
+    /**
+     * 分词根据不同的配置 查找缓存对应的数据库表：数据表
+     */
+    private static Map<String, String> segmentCacheNameDataTableMap = new HashMap<>(4);
 
     public static void main(String[] args){
         getConfig();
@@ -50,11 +59,21 @@ public class JobConfig {
                 String key;
                 while (it.hasNext()) {
                     key = (String) it.next();
-                    if(key.contains("talbename")){
-                        tmp.cacheNameCacheDescMap.put(getKeyIn(key), (String) props.get(key));
-                    }else if(key.contains("dsname")){
-                        tmp.cacheNameDataTableMap.put(getKeyIn(key), (String) props.get(key));
+                    if(key.contains("import")){
+                        if(key.contains("talbename")){
+                            tmp.importCacheNameCacheDescMap.put(getKeyIn(key), (String) props.get(key));
+                        }else if(key.contains("dsname")){
+                            tmp.importCacheNameDataTableMap.put(getKeyIn(key), (String) props.get(key));
+                        }
                     }
+                    if(key.contains("segment")){
+                        if(key.contains("talbename")){
+                            tmp.segmentCacheNameCacheDescMap.put(getKeyIn(key), (String) props.get(key));
+                        }else if(key.contains("dsname")){
+                            tmp.segmentCacheNameDataTableMap.put(getKeyIn(key), (String) props.get(key));
+                        }
+                    }
+
 
                 }
             } catch (Exception e) {
@@ -72,21 +91,46 @@ public class JobConfig {
         return rs;
     }
 
-    public Iterator<String> getAllCacheNames() {
-        return cacheNameDataTableMap.keySet().iterator();
-    }
-
-    public String getDataTableNameBy(final String cacheName) {
-        validateCacheNameDataTables(cacheName);
-        return cacheNameDataTableMap.get(cacheName);
-    }
-
-    private void validateCacheNameDataTables(final String cacheName) {
-        if (ValidateUtils.isNullOrEmpt(this.cacheNameDataTableMap)) {
-            throw new RuntimeException("cache name <===> dataTable mapping is empety!");
+    public Iterator<String> getAllCacheNames(String jobName) {
+        Iterator<String> rs=null;
+        if("import".equals(jobName)){
+            rs=importCacheNameDataTableMap.keySet().iterator();
         }
-        if (!cacheNameDataTableMap.containsKey(cacheName)) {
-            throw new RuntimeException("dataTable name for cacheName:[" + cacheName + "] is null.");
+        if("segment".equals(jobName)){
+            rs=segmentCacheNameDataTableMap.keySet().iterator();
+        }
+        return rs;
+    }
+
+    public String getDataTableNameBy(String cacheName,String jobName) {
+
+        validateCacheNameDataTables(cacheName,jobName);
+        if("import".equals(jobName)) {
+            return importCacheNameCacheDescMap.get(cacheName);
+        }
+        if("segment".equals(jobName)) {
+            return segmentCacheNameDataTableMap.get(cacheName);
+        }
+        return null;
+    }
+
+    private void validateCacheNameDataTables(final String cacheName,String jobName) {
+        if("import".equals(jobName)){
+            if (ValidateUtils.isNullOrEmpt(this.importCacheNameDataTableMap)) {
+                throw new RuntimeException("cache name <===> dataTable mapping is empety!");
+            }
+            if (!importCacheNameDataTableMap.containsKey(cacheName)) {
+                throw new RuntimeException("dataTable name for cacheName:[" + cacheName + "] is null.");
+            }
+        }
+
+        if("segment".equals(jobName)){
+            if (ValidateUtils.isNullOrEmpt(this.segmentCacheNameDataTableMap)) {
+                throw new RuntimeException("cache name <===> dataTable mapping is empety!");
+            }
+            if (!segmentCacheNameDataTableMap.containsKey(cacheName)) {
+                throw new RuntimeException("dataTable name for cacheName:[" + cacheName + "] is null.");
+            }
         }
     }
 

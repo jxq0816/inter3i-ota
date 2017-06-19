@@ -12,9 +12,11 @@
 package com.inter3i.sun.api.ota.v1.job.schedule;
 
 import com.inter3i.sun.api.ota.v1.config.ImportDataConfig;
+import com.inter3i.sun.api.ota.v1.config.JobConfig;
 import com.inter3i.sun.api.ota.v1.config.MongoDBServerConfig;
 import com.inter3i.sun.api.ota.v1.job.ImportDataAdapter;
 import com.inter3i.sun.api.ota.v1.service.TaskScheduledService;
+import com.mongodb.client.MongoCollection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -69,9 +71,12 @@ public class ImportDataJob {
     }
 
     private void importDoc4(final String cacheName, final MongoDBServerConfig serverConfig) {
-        String collectName = serverConfig.getDataTableNameBy(cacheName);
+        String collectName = JobConfig.getConfig().getDataTableNameBy(cacheName,"import");
+
         logger.info("Job:[importDoc2Solr] cacheName:[" + cacheName + "]  from datasource:["+dataSourceName+"] from collect:" + collectName + "] start ...");
-        ImportDataAdapter importDataAdapter = new ImportDataAdapter(cacheName, ImportDataConfig.DBClinetHolder.getInstance(serverConfig).getDataCollectionBy(cacheName), ImportDataConfig.DBClinetHolder.getInstance(serverConfig).getSplCollectionBy(cacheName), serverConfig);
+        MongoCollection collection=ImportDataConfig.DBClinetHolder.getInstance(serverConfig).getDataCollectionBy(cacheName);
+        MongoCollection sqlCollection=ImportDataConfig.DBClinetHolder.getInstance(serverConfig).getSplCollectionBy(cacheName);
+        ImportDataAdapter importDataAdapter = new ImportDataAdapter(cacheName, collection, sqlCollection, serverConfig);
         importDataAdapter.importDoc2Solr();
         logger.info("Job:[importDoc2Solr] cacheName:[" + cacheName + "]  from datasource:["+dataSourceName+"] from collect:" + collectName + "] run compelet.");
 

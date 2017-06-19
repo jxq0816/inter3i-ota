@@ -11,7 +11,6 @@
 
 package com.inter3i.sun.api.ota.v1.config;
 
-import com.inter3i.sun.api.ota.v1.job.ImportDataAdapter;
 import com.inter3i.sun.persistence.RepositoryFactory;
 import com.mongodb.client.MongoCollection;
 import org.slf4j.Logger;
@@ -93,7 +92,7 @@ public class ImportDataConfig {
             try {
                 logger.info("init all mongoDB config:" + serverConfig.toString());
 
-                Iterator<String> allCacheNames = serverConfig.getAllCacheNames();
+                Iterator<String> allCacheNames =JobConfig.getConfig().getAllCacheNames("import");
                 MongoCollection dbCollection = null;
                 String cacheName = null;
                 String dbName = null;
@@ -105,18 +104,13 @@ public class ImportDataConfig {
                     dbAuth = serverConfig.getDBAuthBy(dbName);
 
                     if (null != dbAuth) {
-                        dbCollection = RepositoryFactory.getMongoClient(dbName, serverConfig.getDataTableNameBy(cacheName), dbAuth.getUserName(), dbAuth.getPassword(), serverConfig.getMongoDBIp(), serverConfig.getMongoDBPort());
+                        dbCollection = RepositoryFactory.getMongoClient(dbName, JobConfig.getConfig().getDataTableNameBy(cacheName,"import"), dbAuth.getUserName(), dbAuth.getPassword(), serverConfig.getMongoDBIp(), serverConfig.getMongoDBPort());
                         cacheDatatTables.put(cacheName, dbCollection);
-
-                        //初始化该缓存补充表连接器
-                        dbCollection = RepositoryFactory.getMongoClient(dbName, serverConfig.geSplTableNamesBy(cacheName), dbAuth.getUserName(), dbAuth.getPassword(), serverConfig.getMongoDBIp(), serverConfig.getMongoDBPort());
                         supplyDocTables.put(cacheName, dbCollection);
-                    } else {
-                        dbCollection = RepositoryFactory.getMongoClient(dbName, serverConfig.getDataTableNameBy(cacheName), serverConfig.getMongoDBIp(), serverConfig.getMongoDBPort());
-                        cacheDatatTables.put(cacheName, dbCollection);
 
-                        //初始化该缓存补充表连接器
-                        dbCollection = RepositoryFactory.getMongoClient(dbName, serverConfig.geSplTableNamesBy(cacheName), serverConfig.getMongoDBIp(), serverConfig.getMongoDBPort());
+                    } else {
+                        dbCollection = RepositoryFactory.getMongoClient(dbName, JobConfig.getConfig().getDataTableNameBy(cacheName,"import"), serverConfig.getMongoDBIp(), serverConfig.getMongoDBPort());
+                        cacheDatatTables.put(cacheName, dbCollection);
                         supplyDocTables.put(cacheName, dbCollection);
                     }
                 }
