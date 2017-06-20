@@ -41,10 +41,12 @@ public class ImportDataJob {
 
     private MongoDBServerConfig serverConfig;
 
+    private String dataSourceName;
+
     public void importDoc2SolrFromCache1() {
         Boolean status=taskScheduledService.getStatus(jobType, DataConfig.CACHE_NAME_01);
         if(status){
-            String dataSourceName=JobConfig.getConfig().getDataSourceName(DataConfig.CACHE_NAME_01,jobName);
+            dataSourceName=JobConfig.getConfig().getDataSourceName(DataConfig.CACHE_NAME_01,jobName);
             serverConfig = MongoDBServerConfig.getConfigByDataSourceName(dataSourceName);
             importDoc4(DataConfig.CACHE_NAME_01,dataSourceName, serverConfig);
         }
@@ -54,7 +56,7 @@ public class ImportDataJob {
     public void importDoc2SolrFromCache2() {
         Boolean status=taskScheduledService.getStatus(jobType,DataConfig.CACHE_NAME_02);
         if(status) {
-            String dataSourceName=JobConfig.getConfig().getDataSourceName(DataConfig.CACHE_NAME_02,jobName);
+            dataSourceName=JobConfig.getConfig().getDataSourceName(DataConfig.CACHE_NAME_02,jobName);
             serverConfig = MongoDBServerConfig.getConfigByDataSourceName(dataSourceName);
             importDoc4(DataConfig.CACHE_NAME_02,dataSourceName, serverConfig);
         }
@@ -63,7 +65,7 @@ public class ImportDataJob {
     public void importDoc2SolrFromCache3() {
         Boolean status=taskScheduledService.getStatus(jobType,DataConfig.CACHE_NAME_03);
         if(status) {
-            String dataSourceName=JobConfig.getConfig().getDataSourceName(DataConfig.CACHE_NAME_03,jobName);
+            dataSourceName=JobConfig.getConfig().getDataSourceName(DataConfig.CACHE_NAME_03,jobName);
             serverConfig = MongoDBServerConfig.getConfigByDataSourceName(dataSourceName);
             importDoc4(DataConfig.CACHE_NAME_03,dataSourceName, serverConfig);
         }
@@ -72,7 +74,7 @@ public class ImportDataJob {
     public void importDoc2SolrFromCache4() {
         Boolean status=taskScheduledService.getStatus(jobType,DataConfig.CACHE_NAME_04);
         if(status) {
-            String dataSourceName=JobConfig.getConfig().getDataSourceName(DataConfig.CACHE_NAME_04,jobName);
+            dataSourceName=JobConfig.getConfig().getDataSourceName(DataConfig.CACHE_NAME_04,jobName);
             serverConfig = MongoDBServerConfig.getConfigByDataSourceName(dataSourceName);
             importDoc4(DataConfig.CACHE_NAME_04,dataSourceName, serverConfig);
         }
