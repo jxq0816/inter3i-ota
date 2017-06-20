@@ -24,6 +24,9 @@ import java.util.Properties;
 public class JobConfig {
 
     private static Resource resource = new ClassPathResource("/jobconfig.properties");
+
+    public static final String IMPORT="import";
+    public static final String SEGMENT="segment";
     /**
      * 入库所有的缓存名称 ---> 描述的 映射
      */
@@ -59,14 +62,14 @@ public class JobConfig {
                 String key;
                 while (it.hasNext()) {
                     key = (String) it.next();
-                    if(key.contains("import")){
+                    if(key.contains(IMPORT)){
                         if(key.contains("talbename")){
                             tmp.importCacheNameCacheDescMap.put(getKeyIn(key), (String) props.get(key));
                         }else if(key.contains("dsname")){
                             tmp.importCacheNameDataTableMap.put(getKeyIn(key), (String) props.get(key));
                         }
                     }
-                    if(key.contains("segment")){
+                    if(key.contains(SEGMENT)){
                         if(key.contains("talbename")){
                             tmp.segmentCacheNameCacheDescMap.put(getKeyIn(key), (String) props.get(key));
                         }else if(key.contains("dsname")){
@@ -93,10 +96,10 @@ public class JobConfig {
 
     public Iterator<String> getAllCacheNames(String jobName) {
         Iterator<String> rs=null;
-        if("import".equals(jobName)){
+        if(IMPORT.equals(jobName)){
             rs=importCacheNameDataTableMap.keySet().iterator();
         }
-        if("segment".equals(jobName)){
+        if(SEGMENT.equals(jobName)){
             rs=segmentCacheNameDataTableMap.keySet().iterator();
         }
         return rs;
@@ -105,17 +108,17 @@ public class JobConfig {
     public String getDataTableNameBy(String cacheName,String jobName) {
 
         validateCacheNameDataTables(cacheName,jobName);
-        if("import".equals(jobName)) {
+        if(IMPORT.equals(jobName)) {
             return importCacheNameCacheDescMap.get(cacheName);
         }
-        if("segment".equals(jobName)) {
+        if(SEGMENT.equals(jobName)) {
             return segmentCacheNameDataTableMap.get(cacheName);
         }
         return null;
     }
 
     private void validateCacheNameDataTables(final String cacheName,String jobName) {
-        if("import".equals(jobName)){
+        if(IMPORT.equals(jobName)){
             if (ValidateUtils.isNullOrEmpt(this.importCacheNameDataTableMap)) {
                 throw new RuntimeException("cache name <===> dataTable mapping is empety!");
             }
@@ -124,7 +127,7 @@ public class JobConfig {
             }
         }
 
-        if("segment".equals(jobName)){
+        if(SEGMENT.equals(jobName)){
             if (ValidateUtils.isNullOrEmpt(this.segmentCacheNameDataTableMap)) {
                 throw new RuntimeException("cache name <===> dataTable mapping is empety!");
             }
