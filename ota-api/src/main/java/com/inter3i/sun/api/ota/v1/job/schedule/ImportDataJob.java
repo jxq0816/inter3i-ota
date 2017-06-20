@@ -11,7 +11,8 @@
 
 package com.inter3i.sun.api.ota.v1.job.schedule;
 
-import com.inter3i.sun.api.ota.v1.config.DataConfig;
+import com.inter3i.sun.api.ota.v1.config.CollectionManage;
+import com.inter3i.sun.api.ota.v1.config.DatasourceConfig;
 import com.inter3i.sun.api.ota.v1.config.JobConfig;
 import com.inter3i.sun.api.ota.v1.config.MongoDBServerConfig;
 import com.inter3i.sun.api.ota.v1.job.ImportDataAdapter;
@@ -39,54 +40,49 @@ public class ImportDataJob {
    /* @Autowired
     private MongoDBServerConfig serverConfig;*/
 
-    private MongoDBServerConfig serverConfig;
+    private MongoDBServerConfig serverConfig=MongoDBServerConfig.getConfig();
 
     private String dataSourceName;
 
     public void importDoc2SolrFromCache1() {
-        Boolean status=taskScheduledService.getStatus(jobType, DataConfig.CACHE_NAME_01);
+        Boolean status=taskScheduledService.getStatus(jobType, CollectionManage.CACHE_NAME_01);
         if(status){
-            dataSourceName=JobConfig.getConfig().getDataSourceName(DataConfig.CACHE_NAME_01,jobName);
-            serverConfig = MongoDBServerConfig.getConfigByDataSourceName(dataSourceName);
-            importDoc4(DataConfig.CACHE_NAME_01,dataSourceName, serverConfig);
+            dataSourceName=JobConfig.getConfig().getDataSourceName(CollectionManage.CACHE_NAME_01,jobName);
+            importDoc4(CollectionManage.CACHE_NAME_01,dataSourceName, serverConfig);
         }
     }
 
 
     public void importDoc2SolrFromCache2() {
-        Boolean status=taskScheduledService.getStatus(jobType,DataConfig.CACHE_NAME_02);
+        Boolean status=taskScheduledService.getStatus(jobType,CollectionManage.CACHE_NAME_02);
         if(status) {
-            dataSourceName=JobConfig.getConfig().getDataSourceName(DataConfig.CACHE_NAME_02,jobName);
-            serverConfig = MongoDBServerConfig.getConfigByDataSourceName(dataSourceName);
-            importDoc4(DataConfig.CACHE_NAME_02,dataSourceName, serverConfig);
+            dataSourceName=JobConfig.getConfig().getDataSourceName(CollectionManage.CACHE_NAME_02,jobName);
+            importDoc4(CollectionManage.CACHE_NAME_02,dataSourceName, serverConfig);
         }
     }
 
     public void importDoc2SolrFromCache3() {
-        Boolean status=taskScheduledService.getStatus(jobType,DataConfig.CACHE_NAME_03);
+        Boolean status=taskScheduledService.getStatus(jobType,CollectionManage.CACHE_NAME_03);
         if(status) {
-            dataSourceName=JobConfig.getConfig().getDataSourceName(DataConfig.CACHE_NAME_03,jobName);
-            serverConfig = MongoDBServerConfig.getConfigByDataSourceName(dataSourceName);
-            importDoc4(DataConfig.CACHE_NAME_03,dataSourceName, serverConfig);
+            dataSourceName=JobConfig.getConfig().getDataSourceName(CollectionManage.CACHE_NAME_03,jobName);
+            importDoc4(CollectionManage.CACHE_NAME_03,dataSourceName, serverConfig);
         }
     }
 
     public void importDoc2SolrFromCache4() {
-        Boolean status=taskScheduledService.getStatus(jobType,DataConfig.CACHE_NAME_04);
+        Boolean status=taskScheduledService.getStatus(jobType,CollectionManage.CACHE_NAME_04);
         if(status) {
-            dataSourceName=JobConfig.getConfig().getDataSourceName(DataConfig.CACHE_NAME_04,jobName);
-            serverConfig = MongoDBServerConfig.getConfigByDataSourceName(dataSourceName);
-            importDoc4(DataConfig.CACHE_NAME_04,dataSourceName, serverConfig);
+            dataSourceName=JobConfig.getConfig().getDataSourceName(CollectionManage.CACHE_NAME_04,jobName);
+            importDoc4(CollectionManage.CACHE_NAME_04,dataSourceName, serverConfig);
         }
     }
 
     private void importDoc4(final String cacheName,final String dataSourceName, final MongoDBServerConfig serverConfig) {
         String collectName = JobConfig.getConfig().getDataTableNameBy(cacheName,JobConfig.IMPORT);
-
+        DatasourceConfig datasourceConfig=DatasourceConfig.getConfigByDataSourceName(dataSourceName);
         logger.info("Job:[importDoc2Solr] cacheName:[" + cacheName + "]  from datasource:["+dataSourceName+"] from collect:" + collectName + "] start ...");
-        MongoCollection collection=DataConfig.DBClinetHolder.getInstance(serverConfig,jobName).getDataCollectionBy(cacheName);
-        MongoCollection sqlCollection=DataConfig.DBClinetHolder.getInstance(serverConfig,jobName).getSplCollectionBy(cacheName);
-        ImportDataAdapter importDataAdapter = new ImportDataAdapter(cacheName, collection, sqlCollection, serverConfig);
+        MongoCollection collection=CollectionManage.getCollection(datasourceConfig,collectName);
+        ImportDataAdapter importDataAdapter = new ImportDataAdapter(cacheName, collection, collection, serverConfig);
         importDataAdapter.importDoc2Solr();
         logger.info("Job:[importDoc2Solr] cacheName:[" + cacheName + "]  from datasource:["+dataSourceName+"] from collect:" + collectName + "] run complete.");
 

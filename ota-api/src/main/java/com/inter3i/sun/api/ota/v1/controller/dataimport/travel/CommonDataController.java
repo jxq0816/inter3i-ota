@@ -11,7 +11,7 @@
 
 package com.inter3i.sun.api.ota.v1.controller.dataimport.travel;
 
-import com.inter3i.sun.api.ota.v1.config.DataConfig;
+import com.inter3i.sun.api.ota.v1.config.CollectionManage;
 import com.inter3i.sun.api.ota.v1.config.MongoDBServerConfig;
 import com.inter3i.sun.api.ota.v1.config.StoreDataConfig;
 import com.inter3i.sun.api.ota.v1.service.ServiceFactory;
@@ -37,7 +37,7 @@ public class CommonDataController {
 
     private static final String OPERATE_TYPE_INSERT = "insert";
 
-    private final String dataSourceName="import";
+    private final String dataSourceName="ds_import";
 
     private final ICommonDataService commonDataService;
     //需要校验非空的字段
@@ -45,7 +45,7 @@ public class CommonDataController {
    /* @Autowired
     private MongoDBServerConfig serverConfig;*/
 
-    private MongoDBServerConfig serverConfig = MongoDBServerConfig.getConfigByDataSourceName("import");
+    private MongoDBServerConfig serverConfig = MongoDBServerConfig.getConfig();
     private StoreDataConfig storeDataConfig = StoreDataConfig.getConfig();
 
 
@@ -58,14 +58,14 @@ public class CommonDataController {
     @ResponseBody
     String health() {
         //return "Green!";
-        TimeStatisticUtil.TimeInfo timeInfo = TimeStatisticUtil.getTimeInof(serverConfig.getDataImportUrl(DataConfig.CACHE_NAME_01));
+        TimeStatisticUtil.TimeInfo timeInfo = TimeStatisticUtil.getTimeInof(serverConfig.getDataImportUrl(CollectionManage.CACHE_NAME_01));
         return timeInfo.toString();
     }
 
     @RequestMapping("/clearn")
     public void clearn() {
         //return "Green!";
-        TimeStatisticUtil.removeByKey(serverConfig.getDataImportUrl(DataConfig.CACHE_NAME_01));
+        TimeStatisticUtil.removeByKey(serverConfig.getDataImportUrl(CollectionManage.CACHE_NAME_01));
     }
 
     /*@RequestMapping(value = "/cachedoc", method = {RequestMethod.GET, RequestMethod.POST})

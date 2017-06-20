@@ -25,6 +25,8 @@ public class StoreDataConfig {
 
     private static Resource resource = new ClassPathResource("/storedata.properties");
 
+    private static StoreDataConfig config;
+
     public static final String TABLENAME="tablename";
 
     public static final String DSNAME="dsname";
@@ -43,28 +45,27 @@ public class StoreDataConfig {
     }
 
     public static StoreDataConfig getConfig() {
-
         synchronized (StoreDataConfig.class) {
-
-            //初始化该配置类
-            StoreDataConfig tmp = null;
+            if(config!=null){
+                return config;
+            }
             try {
-                tmp = new StoreDataConfig();
+                config = new StoreDataConfig();
                 Properties props = PropertiesLoaderUtils.loadProperties(resource);
                 Iterator it = props.keySet().iterator();
                 String key;
                 while (it.hasNext()) {
                     key = (String) it.next();
                     if (key.contains(TABLENAME)) {
-                        tmp.storeDataCacheNameTableNameMap.put(getKeyIn(key), (String) props.get(key));
+                        config.storeDataCacheNameTableNameMap.put(getKeyIn(key), (String) props.get(key));
                     } else if (key.contains(DSNAME)) {
-                        tmp.storeDataCacheNameDsNameMap.put(getKeyIn(key), (String) props.get(key));
+                        config.storeDataCacheNameDsNameMap.put(getKeyIn(key), (String) props.get(key));
                     }
                 }
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            return tmp;
+            return config;
         }
     }
 

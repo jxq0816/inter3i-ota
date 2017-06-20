@@ -12,10 +12,13 @@
 package com.inter3i.sun.api.ota.v1.controller.dataimport;
 
 
-import com.inter3i.sun.api.ota.v1.config.DataConfig;
+import com.inter3i.sun.api.ota.v1.config.CollectionManage;
+import com.inter3i.sun.api.ota.v1.config.DatasourceConfig;
 import com.inter3i.sun.api.ota.v1.config.MongoDBServerConfig;
+import com.inter3i.sun.api.ota.v1.config.StoreDataConfig;
 import com.inter3i.sun.api.ota.v1.controller.dataimport.travel.CommonDataController;
 import com.inter3i.sun.api.ota.v1.job.ImportDataAdapter;
+import com.mongodb.client.MongoCollection;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,10 +29,9 @@ import org.springframework.web.bind.annotation.*;
 public class ImportDataController {
     //分词结束以后入mongo
     private static final Logger logger = LoggerFactory.getLogger(CommonDataController.class);
-    private static final String jobName="import";
-    private static final String dataSourceName="export";
+    private static final String dataSourceName="ds_import";
 
-    private MongoDBServerConfig serverConfig = MongoDBServerConfig.getConfigByDataSourceName(dataSourceName);
+    private MongoDBServerConfig serverConfig = MongoDBServerConfig.getConfig();
 
     /*private static final Runnable innerThread = () -> {
         while (true) {
@@ -43,12 +45,15 @@ public class ImportDataController {
         }
     };*/
 
-    @RequestMapping(produces = "application/x-www-form-urlencoded;charset=utf8", value = "/commit", method = {RequestMethod.POST})
-    //@RequestMapping(produces = "text/xml;charset=utf8", value = "/commit", method = {RequestMethod.POST})
-    public
+    /**
+     * mongo-> SOlR
+     * @param cacheName
+     * @param requestData
+     * @return
+     */
     @ResponseBody
-        //String saveDocs(@PathVariable String cacheServerName, @PathVariable String type, @RequestBody String requestDataStr) {
-    String commitData(@RequestParam("cacheName") String cacheName, @RequestBody String requestData) {
+    @RequestMapping(produces = "application/x-www-form-urlencoded;charset=utf8", value = "/commit", method = {RequestMethod.POST})
+    public String commitData(@RequestParam("cacheName") String cacheName, @RequestBody String requestData) {
 
 
         JSONObject responseData = new JSONObject();
@@ -67,7 +72,11 @@ public class ImportDataController {
 //                        while (true) {
 //                            System.out.println("import ... ");
 //                        }
-                        ImportDataAdapter importDataAdapter = new ImportDataAdapter(cacheName, DataConfig.DBClinetHolder.getInstance(serverConfig,jobName).getDataCollectionBy(cacheName), DataConfig.DBClinetHolder.getInstance(serverConfig,jobName).getSplCollectionBy(cacheName), serverConfig, false);
+                        DatasourceConfig datasourceConfig=DatasourceConfig.getConfigByDataSourceName(dataSourceName);
+                        String collectionName=StoreDataConfig.getConfig().getDataTableORSourceName(cacheName,StoreDataConfig.TABLENAME);
+
+                        MongoCollection collection=CollectionManage.getCollection(datasourceConfig,collectionName);
+                        ImportDataAdapter importDataAdapter = new ImportDataAdapter(cacheName,collection ,collection ,serverConfig, false);
                         importDataAdapter.importDoc2Solr();
                     } finally {
                         ImportDataAdapter.getLockBy(cacheName).runComplete();

@@ -11,7 +11,7 @@
 
 package com.inter3i.sun.api.ota.v1.service.impl.dataimport;
 
-import com.inter3i.sun.api.ota.v1.config.JobConfig;
+import com.inter3i.sun.api.ota.v1.config.DatasourceConfig;
 import com.inter3i.sun.api.ota.v1.config.MongoDBServerConfig;
 import com.inter3i.sun.api.ota.v1.config.StoreDataConfig;
 import com.inter3i.sun.api.ota.v1.service.dataimport.ICommonDataService;
@@ -36,7 +36,15 @@ public class CommonDataService implements ICommonDataService {
         }
         logger.info("--+-savaCommonData into mongoDB ...");
         long starTime = System.currentTimeMillis();
-        MongoCollection dbCollection = RepositoryFactory.getMongoClient(storeDataConfig.getDataTableORSourceName(cacheName,StoreDataConfig.DSNAME), storeDataConfig.getDataTableORSourceName(cacheName,StoreDataConfig.TABLENAME), serverConfig.getMongoDBIp(), serverConfig.getMongoDBPort());
+        String dataSourceName=storeDataConfig.getDataTableORSourceName(cacheName,StoreDataConfig.DSNAME);
+
+        DatasourceConfig dataSourceConfig=DatasourceConfig.getConfigByDataSourceName(dataSourceName);
+        String dbName=dataSourceConfig.getDbName();
+
+
+        String tableName=storeDataConfig.getDataTableORSourceName(cacheName,StoreDataConfig.TABLENAME);
+
+        MongoCollection dbCollection = RepositoryFactory.getMongoClient(dbName,tableName,dataSourceConfig.getMongoDBIp(), dataSourceConfig.getMongoDBPort());
         Document mogoDbBean = converBean2Doc(commonData);
         dbCollection.insertOne(mogoDbBean);
         long endTime = System.currentTimeMillis();

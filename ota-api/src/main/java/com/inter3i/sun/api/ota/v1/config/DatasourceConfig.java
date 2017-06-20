@@ -24,14 +24,37 @@ public class DatasourceConfig {
     private String dbName;
     private String mongoDBIp;
     private int mongoDBPort;
+    /**
+     * 根据不同的配置 查找缓存对应的数据库表：数据表
+     */
+    private Map<String, DBAuth> dbAuths = new HashMap<String, DBAuth>(2);
+
+    public static final class DBAuth {
+        private String userName;
+        private String password;
+
+        public String getUserName() {
+            return userName;
+        }
+
+        public void setUserName(String userName) {
+            this.userName = userName;
+        }
+
+        public String getPassword() {
+            return password;
+        }
+
+        public void setPassword(String password) {
+            this.password = password;
+        }
+    }
 
     public static DatasourceConfig getConfigByDataSourceName(String dataSourceName) {
         DatasourceConfig rs=(DatasourceConfig)configMap.get(dataSourceName);
         if(rs!=null){
             return rs;
         }
-
-
         Properties props = null;
         try {
             props = PropertiesLoaderUtils.loadProperties(resource);
@@ -105,36 +128,19 @@ public class DatasourceConfig {
         return key.substring(key.lastIndexOf(splitChar) + 1);
     }
 
-    /**
-     * 根据不同的配置 查找缓存对应的数据库表：数据表
-     */
-    private Map<String, MongoDBServerConfig.DBAuth> dbAuths = new HashMap<String, MongoDBServerConfig.DBAuth>(2);
-
-    public static final class DBAuth {
-        private String userName;
-        private String password;
-
-        public String getUserName() {
-            return userName;
+    public DBAuth getDBAuthBy(final String dbName) {
+        if (!dbAuths.containsKey(dbName)) {
+            return null;
         }
-
-        public void setUserName(String userName) {
-            this.userName = userName;
-        }
-
-        public String getPassword() {
-            return password;
-        }
-
-        public void setPassword(String password) {
-            this.password = password;
-        }
+        return dbAuths.get(dbName);
     }
 
+
+
     public void addAuthUserName4(final String dbName, final String userName) {
-        MongoDBServerConfig.DBAuth dbAuth = null;
+        DBAuth dbAuth = null;
         if (!dbAuths.containsKey(dbName)) {
-            dbAuth = new MongoDBServerConfig.DBAuth();
+            dbAuth = new DBAuth();
             dbAuths.put(dbName, dbAuth);
         } else {
             dbAuth = dbAuths.get(dbName);
@@ -143,9 +149,9 @@ public class DatasourceConfig {
     }
 
     public void addAuthPassword4(final String dbName, final String password) {
-        MongoDBServerConfig.DBAuth dbAuth = null;
+        DBAuth dbAuth = null;
         if (!dbAuths.containsKey(dbName)) {
-            dbAuth = new MongoDBServerConfig.DBAuth();
+            dbAuth = new DBAuth();
             dbAuths.put(dbName, dbAuth);
         } else {
             dbAuth = dbAuths.get(dbName);

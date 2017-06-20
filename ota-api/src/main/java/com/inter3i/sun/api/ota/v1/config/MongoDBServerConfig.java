@@ -17,8 +17,10 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PropertiesLoaderUtils;
 
-import java.io.IOException;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Properties;
 
 /*@Configuration
 @ConfigurationProperties(prefix = "di")
@@ -26,41 +28,8 @@ import java.util.*;
 @PropertySource("file:D:/tmp/config/importdata.properties")*/
 public class MongoDBServerConfig {
     private static Resource resource = new ClassPathResource("/importdata.properties");
-    private static Map configMap=new HashMap();
 
-    public static MongoDBServerConfig getConfigByDataSourceName(String dataSourceName) {
-        MongoDBServerConfig rs=(MongoDBServerConfig)configMap.get(dataSourceName);
-        if(rs!=null){
-            return rs;
-        }
-
-
-        Properties props = null;
-        try {
-            props = PropertiesLoaderUtils.loadProperties(resource);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        Set<Map.Entry<Object, Object>> set = props.entrySet();
-        for (Map.Entry<Object, Object> m : set) {
-            if(m.getValue().equals(dataSourceName)){
-                String key=(String)m.getKey();
-                String[] array=key.split("\\.");
-                String dataSourceNum=array[array.length-1];
-                MongoDBServerConfig config=getConfig(dataSourceNum);
-                configMap.put(dataSourceName,config);
-                return config;
-            }
-        }
-        return null;
-    }
-
-    public static MongoDBServerConfig getConfig(String dataSourceNum) {
-        String dbNameKey="di.dbName."+dataSourceNum;
-        String ipKey="di.mongoDBIp."+dataSourceNum;
-        String portKey="di.mongoDBPort."+dataSourceNum;
-        String userNameKey="di.dbAuth.userName."+dataSourceNum;
-        String passwordKey="di.dbAuth.password."+dataSourceNum;
+    public static MongoDBServerConfig getConfig() {
 
         synchronized (MongoDBServerConfig.class) {
 
@@ -107,21 +76,7 @@ public class MongoDBServerConfig {
                             break;
                     }
 
-                    if(ipKey.equals(key)){
-                        tmp.setMongoDBIp((String) props.get(key));
-                    } else if(dbNameKey.equals(key)){
-                        tmp.setDbName((String) props.get(key));
-                    }else if(portKey.equals(key)){
-                        tmp.setMongoDBPort(Integer.valueOf((String) props.get(key)));
-                    }else if (key.equals(userNameKey)) {
-                        //提取用户名
-                        String dbName = getKeyInLastSpliteTerm(key, ".");
-                        tmp.addAuthUserName4(dbName, (String) props.get(key));
-                    } else if (key.equals(passwordKey)) {
-                        //提取密码
-                        String dbName = getKeyInLastSpliteTerm(key, ".");
-                        tmp.addAuthPassword4(dbName, (String) props.get(key));
-                    }  else if (key.startsWith("di.cachePortMap[")) {
+                    if (key.startsWith("di.cachePortMap[")) {
                         tmp.add4CachePortMap(getKeyIn(key), Integer.valueOf((String) props.get(key)));
                     }
                 }
@@ -137,24 +92,10 @@ public class MongoDBServerConfig {
         return key.substring(key.indexOf("[") + 1, key.length() - 1);
     }
 
-    //获取di.dbAuth.password.3idata 中的 3idata
-    private static String getKeyInLastSpliteTerm(String key, String splitChar) {
-        if (!key.contains(splitChar)) {
-            return null;
-        }
-        if (key.endsWith(splitChar)) {
-            throw new RuntimeException("key can not end with splitChar:[" + splitChar + "].");
-        }
-        return key.substring(key.lastIndexOf(splitChar) + 1);
-    }
-
     private static String importPath;
     private static String flushPath;
     private static String supplyPath;
 
-    private String dbName;
-    private String mongoDBIp;
-    private int mongoDBPort;
     private Map<String, String> cacheInfos = new HashMap<>(4);
 
     private String nlpServerIp;
@@ -169,86 +110,6 @@ public class MongoDBServerConfig {
     private Map<String, Integer> cachePortMap = new HashMap<>(4);
 
 
-    public DBAuth getDBAuthBy(final String dbName) {
-        if (!dbAuths.containsKey(dbName)) {
-//            throw new RuntimeException("getUserName for:" + dbName + "] exception, the config of dbAuth not contains the config for this dbname.");
-            return null;
-        }
-        return dbAuths.get(dbName);
-    }
-
-    /**
-     * 根据不同的配置 查找缓存对应的数据库表：数据表
-     */
-    private Map<String, DBAuth> dbAuths = new HashMap<String, DBAuth>(2);
-
-    public static final class DBAuth {
-        private String userName;
-        private String password;
-
-        public String getUserName() {
-            return userName;
-        }
-
-        public void setUserName(String userName) {
-            this.userName = userName;
-        }
-
-        public String getPassword() {
-            return password;
-        }
-
-        public void setPassword(String password) {
-            this.password = password;
-        }
-    }
-
-    public void addAuthUserName4(final String dbName, final String userName) {
-        DBAuth dbAuth = null;
-        if (!dbAuths.containsKey(dbName)) {
-            dbAuth = new DBAuth();
-            dbAuths.put(dbName, dbAuth);
-        } else {
-            dbAuth = dbAuths.get(dbName);
-        }
-        dbAuth.setUserName(userName);
-    }
-
-    public void addAuthPassword4(final String dbName, final String password) {
-        DBAuth dbAuth = null;
-        if (!dbAuths.containsKey(dbName)) {
-            dbAuth = new DBAuth();
-            dbAuths.put(dbName, dbAuth);
-        } else {
-            dbAuth = dbAuths.get(dbName);
-        }
-        dbAuth.setPassword(password);
-    }
-
-
-    public String getDbName() {
-        return dbName;
-    }
-
-    public void setDbName(String dbName) {
-        this.dbName = dbName;
-    }
-
-    public String getMongoDBIp() {
-        return mongoDBIp;
-    }
-
-    public void setMongoDBIp(String mongoDBIp) {
-        this.mongoDBIp = mongoDBIp;
-    }
-
-    public int getMongoDBPort() {
-        return mongoDBPort;
-    }
-
-    public void setMongoDBPort(int mongoDBPort) {
-        this.mongoDBPort = mongoDBPort;
-    }
 
     public String getNlpServerIp() {
         return nlpServerIp;

@@ -11,8 +11,8 @@
 
 package com.inter3i.sun.api.ota.v1.job;
 
+import com.inter3i.sun.api.ota.v1.config.CollectionManage;
 import com.inter3i.sun.api.ota.v1.config.IMongoDocConverter;
-import com.inter3i.sun.api.ota.v1.config.DataConfig;
 import com.inter3i.sun.api.ota.v1.config.MongoDBServerConfig;
 import com.inter3i.sun.api.ota.v1.net.HttpUtils;
 import com.inter3i.sun.api.ota.v1.util.MongoUtils;
@@ -399,7 +399,7 @@ public class ImportDataAdapter {
                     JSONObject jsonObject = (JSONObject) commonData;
                     Document mogoDbBean = new Document();
                     mogoDbBean.put("doc", jsonObject.toString());
-                    mogoDbBean.put("supplyStatsu", DataConfig.SUPPLY_STATUS_NOT);
+                    mogoDbBean.put("supplyStatsu", CollectionManage.SUPPLY_STATUS_NOT);
                     return mogoDbBean;
                 }
             });
@@ -466,7 +466,7 @@ public class ImportDataAdapter {
         Document supplyInfo = null;
         JSONArray batchSupplyDocs = new JSONArray();
 
-        Bson fileter1 = Filters.eq("supplyStatsu", DataConfig.SUPPLY_STATUS_NOT); //没有supply的
+        Bson fileter1 = Filters.eq("supplyStatsu", CollectionManage.SUPPLY_STATUS_NOT); //没有supply的
         Bson conds = Filters.and(fileter1);
         //查询出来所有的文章
         FindIterable iterable = dbSupplyCollection.find(conds);
@@ -547,7 +547,7 @@ public class ImportDataAdapter {
                     //updata status to db
                     document = new Document();
                     document.put(MongoUtils.PRIM_KEY_ID, ids[idx]);
-                    document.put("supplyStatsu", DataConfig.SUPPLY_STATUS_FAILED);
+                    document.put("supplyStatsu", CollectionManage.SUPPLY_STATUS_FAILED);
                     document.put("ErrorMsg", errorMsg);
                     MongoUtils.updateById(dbSupplyCollection, document);
 
@@ -565,7 +565,7 @@ public class ImportDataAdapter {
 
                 document = new Document();
                 document.put(MongoUtils.PRIM_KEY_ID, ids[i]);
-                document.put("supplyStatsu", DataConfig.SUPPLY_STATUS_SUCCESS);
+                document.put("supplyStatsu", CollectionManage.SUPPLY_STATUS_SUCCESS);
                 MongoUtils.updateById(dbSupplyCollection, document);
             }
         } else {

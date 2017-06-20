@@ -1,6 +1,6 @@
 package com.inter3i.sun.api.ota.v1.service;
 
-import com.inter3i.sun.api.ota.v1.config.MongoDBServerConfig;
+import com.inter3i.sun.api.ota.v1.config.DatasourceConfig;
 import com.inter3i.sun.persistence.RepositoryFactory;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
@@ -22,13 +22,14 @@ public class TaskScheduledService {
     private static final String JOB_TYPE="jobType";
     private static final String CACHE_NAME="cacheName";
     private static final String STATUS="status";
+    private static final String DATASOURCE_NAME="ds_task";
     private static final String COLLECTION_NAME="task_schedule";
     private MongoCollection collection;
 
     public TaskScheduledService() throws UnknownHostException {
 
 
-        MongoDBServerConfig config = MongoDBServerConfig.getConfigByDataSourceName("status");
+        DatasourceConfig config = DatasourceConfig.getConfigByDataSourceName(DATASOURCE_NAME);
         String ip=config.getMongoDBIp();
         int port=config.getMongoDBPort();
         String database=config.getDbName();

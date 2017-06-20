@@ -11,13 +11,12 @@
 
 package com.inter3i.sun.api.ota.v1.service.dataimport;
 
-import com.inter3i.sun.api.ota.v1.config.MongoDBServerConfig;
-import com.inter3i.sun.persistence.dataimport.CommonData;
+import com.inter3i.sun.api.ota.v1.config.DatasourceConfig;
 import com.inter3i.sun.persistence.dataimport.travle.Product;
 import com.inter3i.sun.persistence.dataimport.travle.ProductComment;
 
 public interface ITravelDataService {
-    public void saveProduct(final Product productfinal, final MongoDBServerConfig serverConfig);
+    public void saveProduct(final Product productfinal, final DatasourceConfig datasourceConfig);
 
     public void savaProducts(Product.Products productList);
 

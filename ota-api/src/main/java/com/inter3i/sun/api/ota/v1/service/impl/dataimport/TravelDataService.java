@@ -11,8 +11,8 @@
 
 package com.inter3i.sun.api.ota.v1.service.impl.dataimport;
 
-import com.inter3i.sun.api.ota.v1.config.DataConfig;
-import com.inter3i.sun.api.ota.v1.config.MongoDBServerConfig;
+import com.inter3i.sun.api.ota.v1.config.CollectionManage;
+import com.inter3i.sun.api.ota.v1.config.DatasourceConfig;
 import com.inter3i.sun.api.ota.v1.controller.dataimport.travel.TravelDataImportController;
 import com.inter3i.sun.api.ota.v1.service.dataimport.ITravelDataService;
 import com.inter3i.sun.persistence.dataimport.travle.Product;
@@ -26,9 +26,9 @@ public class TravelDataService implements ITravelDataService {
     private static final Logger logger = LoggerFactory.getLogger(TravelDataImportController.class);
 
 
-    public void saveProduct(Product product, final MongoDBServerConfig serverConfig) {
-        MongoRepositoryFactory factory = MongoRepositoryFactory.fromDefaultDb(serverConfig.getDbName());
-        MongoRepository<Product> repository = (MongoRepository) factory.createRepository(Product.class, DataConfig.TABLE_NAME_PRODUCT);
+    public void saveProduct(Product product, final DatasourceConfig datasourceConfig) {
+        MongoRepositoryFactory factory = MongoRepositoryFactory.fromDefaultDb(datasourceConfig.getDbName());
+        MongoRepository<Product> repository = (MongoRepository) factory.createRepository(Product.class, CollectionManage.TABLE_NAME_PRODUCT);
         repository.save(product);
     }
 
