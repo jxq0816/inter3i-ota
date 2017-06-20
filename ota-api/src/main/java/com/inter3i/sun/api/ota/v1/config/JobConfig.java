@@ -28,18 +28,18 @@ public class JobConfig {
     public static final String IMPORT="import";
     public static final String SEGMENT="segment";
     /**
-     * 入库所有的缓存名称 ---> 描述的 映射
+     * 入库所有的缓存名称 ---> 数据源
      */
-    private static Map<String, String> importCacheNameCacheDescMap = new HashMap<>(4);
+    private static Map<String, String> importCacheNameDsNameMap = new HashMap<>(4);
     /**
      * 入库根据不同的配置 查找缓存对应的数据库表：数据表
      */
     private static Map<String, String> importCacheNameDataTableMap = new HashMap<>(4);
 
     /**
-     * 分词所有的缓存名称 ---> 描述的 映射
+     * 分词所有的缓存名称 ---> 数据源
      */
-    private static Map<String, String> segmentCacheNameCacheDescMap = new HashMap<>(4);
+    private static Map<String, String> segmentCacheNameDsNameMap = new HashMap<>(4);
     /**
      * 分词根据不同的配置 查找缓存对应的数据库表：数据表
      */
@@ -64,20 +64,18 @@ public class JobConfig {
                     key = (String) it.next();
                     if(key.contains(IMPORT)){
                         if(key.contains("talbename")){
-                            tmp.importCacheNameCacheDescMap.put(getKeyIn(key), (String) props.get(key));
-                        }else if(key.contains("dsname")){
                             tmp.importCacheNameDataTableMap.put(getKeyIn(key), (String) props.get(key));
+                        }else if(key.contains("dsname")){
+                            tmp.importCacheNameDsNameMap.put(getKeyIn(key), (String) props.get(key));
                         }
                     }
                     if(key.contains(SEGMENT)){
                         if(key.contains("talbename")){
-                            tmp.segmentCacheNameCacheDescMap.put(getKeyIn(key), (String) props.get(key));
-                        }else if(key.contains("dsname")){
                             tmp.segmentCacheNameDataTableMap.put(getKeyIn(key), (String) props.get(key));
+                        }else if(key.contains("dsname")){
+                            tmp.segmentCacheNameDsNameMap.put(getKeyIn(key), (String) props.get(key));
                         }
                     }
-
-
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -105,11 +103,17 @@ public class JobConfig {
         return rs;
     }
 
+    /**
+     * 根据cacheName,JobName 查询DataTable
+     * @param cacheName
+     * @param jobName
+     * @return
+     */
     public String getDataTableNameBy(String cacheName,String jobName) {
 
         validateCacheNameDataTables(cacheName,jobName);
         if(IMPORT.equals(jobName)) {
-            return importCacheNameCacheDescMap.get(cacheName);
+            return importCacheNameDataTableMap.get(cacheName);
         }
         if(SEGMENT.equals(jobName)) {
             return segmentCacheNameDataTableMap.get(cacheName);
@@ -133,6 +137,44 @@ public class JobConfig {
             }
             if (!segmentCacheNameDataTableMap.containsKey(cacheName)) {
                 throw new RuntimeException("dataTable name for cacheName:[" + cacheName + "] is null.");
+            }
+        }
+    }
+
+    /**
+     * 根据cacheName,JobName 查询DataSource
+     * @param cacheName
+     * @param jobName
+     * @return
+     */
+    public String getDataSourceName(String cacheName,String jobName) {
+
+        validateCacheNameDataTables(cacheName,jobName);
+        if(IMPORT.equals(jobName)) {
+            return importCacheNameDsNameMap.get(cacheName);
+        }
+        if(SEGMENT.equals(jobName)) {
+            return segmentCacheNameDsNameMap.get(cacheName);
+        }
+        return null;
+    }
+
+    private void validateCacheNameDataSource(final String cacheName,String jobName) {
+        if(IMPORT.equals(jobName)){
+            if (ValidateUtils.isNullOrEmpt(this.importCacheNameDsNameMap)) {
+                throw new RuntimeException("cache name <===> dataTable mapping is empety!");
+            }
+            if (!importCacheNameDsNameMap.containsKey(cacheName)) {
+                throw new RuntimeException("dataTable name for cacheName:[" + cacheName + "] is null.");
+            }
+        }
+
+        if(SEGMENT.equals(jobName)){
+            if (ValidateUtils.isNullOrEmpt(this.segmentCacheNameDsNameMap)) {
+                throw new RuntimeException("cache name <===> dataSource mapping is empety!");
+            }
+            if (!segmentCacheNameDsNameMap.containsKey(cacheName)) {
+                throw new RuntimeException("dataSource name for cacheName:[" + cacheName + "] is null.");
             }
         }
     }
