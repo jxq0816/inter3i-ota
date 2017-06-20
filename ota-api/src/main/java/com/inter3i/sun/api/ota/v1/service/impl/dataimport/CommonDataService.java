@@ -13,6 +13,7 @@ package com.inter3i.sun.api.ota.v1.service.impl.dataimport;
 
 import com.inter3i.sun.api.ota.v1.config.JobConfig;
 import com.inter3i.sun.api.ota.v1.config.MongoDBServerConfig;
+import com.inter3i.sun.api.ota.v1.config.StoreDataConfig;
 import com.inter3i.sun.api.ota.v1.service.dataimport.ICommonDataService;
 import com.inter3i.sun.persistence.RepositoryFactory;
 import com.inter3i.sun.persistence.dataimport.CommonData;
@@ -28,14 +29,14 @@ import java.net.UnknownHostException;
 public class CommonDataService implements ICommonDataService {
     private static final Logger logger = LoggerFactory.getLogger(CommonDataService.class);
 
-    public void savaCommonData(final String cacheName, final CommonData commonData, final MongoDBServerConfig serverConfig,final JobConfig jobConfig) throws UnknownHostException {
+    public void savaCommonData(final String cacheName, final CommonData commonData, final MongoDBServerConfig serverConfig,final StoreDataConfig storeDataConfig) throws UnknownHostException {
         if (null == commonData || null == commonData.getJsonDoc() || 0 == commonData.getJsonDoc().size()) {
             logger.warn("--+-savaCommonData into mongoDB failed,Data is null.");
             return;
         }
         logger.info("--+-savaCommonData into mongoDB ...");
         long starTime = System.currentTimeMillis();
-        MongoCollection dbCollection = RepositoryFactory.getMongoClient(serverConfig.getDbName(), jobConfig.getDataTableNameBy(cacheName,"import"), serverConfig.getMongoDBIp(), serverConfig.getMongoDBPort());
+        MongoCollection dbCollection = RepositoryFactory.getMongoClient(storeDataConfig.getDataTableORSourceName(cacheName,StoreDataConfig.DSNAME), storeDataConfig.getDataTableORSourceName(cacheName,StoreDataConfig.TABLENAME), serverConfig.getMongoDBIp(), serverConfig.getMongoDBPort());
         Document mogoDbBean = converBean2Doc(commonData);
         dbCollection.insertOne(mogoDbBean);
         long endTime = System.currentTimeMillis();

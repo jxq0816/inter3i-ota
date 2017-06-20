@@ -12,8 +12,8 @@
 package com.inter3i.sun.api.ota.v1.controller.dataimport.travel;
 
 import com.inter3i.sun.api.ota.v1.config.DataConfig;
-import com.inter3i.sun.api.ota.v1.config.JobConfig;
 import com.inter3i.sun.api.ota.v1.config.MongoDBServerConfig;
+import com.inter3i.sun.api.ota.v1.config.StoreDataConfig;
 import com.inter3i.sun.api.ota.v1.service.ServiceFactory;
 import com.inter3i.sun.api.ota.v1.service.dataimport.ICommonDataService;
 import com.inter3i.sun.api.ota.v1.util.TimeStatisticUtil;
@@ -46,7 +46,7 @@ public class CommonDataController {
     private MongoDBServerConfig serverConfig;*/
 
     private MongoDBServerConfig serverConfig = MongoDBServerConfig.getConfigByDataSourceName("import");
-    private JobConfig jobConfig = JobConfig.getConfig();
+    private StoreDataConfig storeDataConfig = StoreDataConfig.getConfig();
 
 
     CommonDataController() {
@@ -126,7 +126,7 @@ public class CommonDataController {
             commonData.setJsonDoc(doc);
 
             if (OPERATE_TYPE_INSERT.equals(type)) {
-                commonDataService.savaCommonData(cacheServerName, commonData, serverConfig,jobConfig);
+                commonDataService.savaCommonData(cacheServerName, commonData, serverConfig,storeDataConfig);
             } else {
                 throw new NonSupportException("unsupported type:[" + type + "] for controller:[CommonDataController]");
             }

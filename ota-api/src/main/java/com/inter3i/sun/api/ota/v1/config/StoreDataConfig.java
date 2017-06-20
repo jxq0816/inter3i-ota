@@ -25,9 +25,9 @@ public class StoreDataConfig {
 
     private static Resource resource = new ClassPathResource("/storedata.properties");
 
-    private static final String TABLENAME="tablename";
+    public static final String TABLENAME="tablename";
 
-    private static final String DSNAME="dsname";
+    public static final String DSNAME="dsname";
     /**
      * 数据入库(mongo)时候给每个缓存名称指定数据源
      */

@@ -11,12 +11,12 @@
 
 package com.inter3i.sun.api.ota.v1.service.dataimport;
 
-import com.inter3i.sun.api.ota.v1.config.JobConfig;
 import com.inter3i.sun.api.ota.v1.config.MongoDBServerConfig;
+import com.inter3i.sun.api.ota.v1.config.StoreDataConfig;
 import com.inter3i.sun.persistence.dataimport.CommonData;
 
 import java.net.UnknownHostException;
 
 public interface ICommonDataService {
-    void savaCommonData(final String cacheName, final CommonData commonDatas, final MongoDBServerConfig serverConfig,final JobConfig jobConfig) throws UnknownHostException;
+    void savaCommonData(final String cacheName, final CommonData commonDatas, final MongoDBServerConfig serverConfig,final StoreDataConfig storeDataConfig) throws UnknownHostException;
 }
