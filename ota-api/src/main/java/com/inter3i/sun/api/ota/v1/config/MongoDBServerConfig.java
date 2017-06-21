@@ -24,10 +24,10 @@ import java.util.Properties;
 
 /*@Configuration
 @ConfigurationProperties(prefix = "di")
-*//*@PropertySource("classpath:importdata.properties")*//*
-@PropertySource("file:D:/tmp/config/importdata.properties")*/
+*//*@PropertySource("classpath:mongoDBServer.properties")*//*
+@PropertySource("file:D:/tmp/config/mongoDBServer.properties")*/
 public class MongoDBServerConfig {
-    private static Resource resource = new ClassPathResource("/importdata.properties");
+    private static Resource resource = new ClassPathResource("/mongoDBServer.properties");
 
     public static MongoDBServerConfig getConfig() {
 
