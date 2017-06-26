@@ -12,12 +12,10 @@
 package com.inter3i.sun.persistence.dataimport;
 
 import com.inter3i.sun.persistence.Entity;
-import lombok.Data;
 
 import java.util.Map;
 
-@Data
-public class CommonData extends Entity {
+public class CommonData extends Entity{
     public static final int IMPORTSTATUS_NO_IMPORT = 0;
     public static final int IMPORTSTATUS_IMPORT_SUCCESS = 1;
     public static final int IMPORTSTATUS_IMPORT_FAILED = 2;
@@ -42,6 +40,62 @@ public class CommonData extends Entity {
 
     private String segmentedEmg;
     private String importEmg;
+
+    public Map getJsonDoc() {
+        return jsonDoc;
+    }
+
+    public void setJsonDoc(Map jsonDoc) {
+        this.jsonDoc = jsonDoc;
+    }
+
+    public Map getDataSmryInfo() {
+        return dataSmryInfo;
+    }
+
+    public void setDataSmryInfo(Map dataSmryInfo) {
+        this.dataSmryInfo = dataSmryInfo;
+    }
+
+    public int getImportStatus() {
+        return importStatus;
+    }
+
+    public void setImportStatus(int importStatus) {
+        this.importStatus = importStatus;
+    }
+
+    public int getSegmentedStatus() {
+        return segmentedStatus;
+    }
+
+    public void setSegmentedStatus(int segmentedStatus) {
+        this.segmentedStatus = segmentedStatus;
+    }
+
+    public long getCacheDataTime() {
+        return cacheDataTime;
+    }
+
+    public void setCacheDataTime(long cacheDataTime) {
+        this.cacheDataTime = cacheDataTime;
+    }
+
+    public String getSegmentedEmg() {
+        return segmentedEmg;
+    }
+
+    public void setSegmentedEmg(String segmentedEmg) {
+        this.segmentedEmg = segmentedEmg;
+    }
+
+    public String getImportEmg() {
+        return importEmg;
+    }
+
+    public void setImportEmg(String importEmg) {
+        this.importEmg = importEmg;
+    }
 
    /* private int question_id;
     private int answer_id;

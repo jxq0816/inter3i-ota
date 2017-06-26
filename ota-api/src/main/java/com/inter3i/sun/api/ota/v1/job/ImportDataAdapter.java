@@ -307,9 +307,15 @@ public class ImportDataAdapter {
                 }
                 //curBathNum++;
                 handleNum++;
+                if(doc.containsKey("jsonDoc") && !ValidateUtils.isNullOrEmpt(doc.get("jsonDoc"))){
+                    Document taskData = (Document) doc.get("jsonDoc");
+                    taskDataStr = taskData.toJson();
+                }else if(doc.containsKey("jsonDocStr") && !ValidateUtils.isNullOrEmpt(doc.get("jsonDocStr"))){
+                    taskDataStr = (String) doc.get("jsonDocStr");
+                }else{
+                    throw new RuntimeException("Job:[ ImportDataJob ] , jsonDoc && jsonDocStr is null");
+                }
 
-                Document taskData = (Document) doc.get("jsonDoc");
-                taskDataStr = taskData.toJson();
                 reqDoTmp = new JSONObject(taskDataStr);
                 reqDoTmp.put("id4cahe", t);
                 reqDatas.put(t, reqDoTmp);
