@@ -37,40 +37,39 @@
     <task:scheduled-tasks scheduler="sgScheduler">
         <!-- ***************************************** 数据入库定时任务 ***************************************** -->
         <!-- 8081端口 -->
-        <!--<task:scheduled ref="importJob" method="importDoc2SolrFromCache1" cron="0 0 1,4,7,22 * * ?"/>-->
-        <task:scheduled ref="importJob" method="importDoc2SolrFromCache1" cron="1 */1 * * * ?"/>
+        <!-- <task:scheduled ref="importJob" method="importDoc2SolrFromCache1" cron="0 0 0,1,2,3,4,5,21,22,23 * * ?"/> -->
+        <task:scheduled ref="importJob" method="importDoc2SolrFromCache1" cron="1 * * * * ?"/>
 
         <!-- 8071端口  -->
-        <!--<task:scheduled ref="importJob" method="importDoc2SolrFromCache2" cron="0 0 2,5,8,23 * * ?"/>-->
-        <!--<task:scheduled ref="importJob" method="importDoc2SolrFromCache2" cron="1 * * * * ?"/>-->
+        <!--<task:scheduled ref="importJob" method="importDoc2SolrFromCache2" cron="0 0 0,1,2,3,4,5,21,22,23 * * ?"/> -->
+        <task:scheduled ref="importJob" method="importDoc2SolrFromCache2" cron="1 * * * * ?"/>
 
 
         <!--7011端口 -->
-        <!--<task:scheduled ref="importJob" method="importDoc2SolrFromCache3" cron="0 0 0,3,6,21 * * ?"/>-->
-        <!--<task:scheduled ref="importJob" method="importDoc2SolrFromCache3" cron="1 * * * * ?"/>-->
-
+        <!-- <task:scheduled ref="importJob" method="importDoc2SolrFromCache3" cron="0 0 0,1,2,3,4,5,21,22,23 * * ?"/> -->
+        <task:scheduled ref="importJob" method="importDoc2SolrFromCache3" cron="1 * * * * ?"/>
 
         <!-- 7021端口 -->
-        <!--<task:scheduled ref="importJob" method="importDoc2SolrFromCache4" cron="0 30 1,4,7,22 * * ?"/>-->
-        <!--<task:scheduled ref="importJob" method="importDoc2SolrFromCache4" cron="1 * * * * ?"/>-->
+        <!-- <task:scheduled ref="importJob" method="importDoc2SolrFromCache4" cron="0 0 0,1,2,3,4,5,21,22,23 * * ?"/> -->
+        <task:scheduled ref="importJob" method="importDoc2SolrFromCache4" cron="1 * * * * ?"/>
 
         <!-- ***************************************** 数据入库定时任务 *****************************************-->
 
         <!--***************************************** 分词定时任务 *****************************************-->
         <!--8081端口-->
-        <task:scheduled ref="segmenteJob" method="segmentDocs4Cache1" cron="1 * * * * ?"/>
-        <!--<task:scheduled ref="segmenteJob" method="segmentDocs4Cache1" cron="0 */2 * * * ?"/>-->
+        <!--<task:scheduled ref="segmenteJob" method="segmentDocs4Cache1" cron="1 * * * * ?"/>-->
+        <task:scheduled ref="segmenteJob" method="segmentDocs4Cache1" cron="0 0,20,40 * * * ?"/>
 
         <!-- 8071端口 -->
-        <!--<task:scheduled ref="segmenteJob" method="segmentDocs4Cache2" cron="15 5,25,45 * * * ?"/>-->
-        <!--&lt;!&ndash;<task:scheduled ref="segmenteJob" method="segmentDocs4Cache2" cron="1 * * * * ?"/>&ndash;&gt;-->
+        <task:scheduled ref="segmenteJob" method="segmentDocs4Cache2" cron="0 5,25,45 * * * ?"/>
+        <!--<task:scheduled ref="segmenteJob" method="segmentDocs4Cache2" cron="1 * * * * ?"/>-->
 
 
         <!-- 7011端口 -->
-        <!--<task:scheduled ref="segmenteJob" method="segmentDocs4Cache3" cron="30 10,30,50 * * * ?"/>-->
+        <task:scheduled ref="segmenteJob" method="segmentDocs4Cache3" cron="0 10,30,50 * * * ?"/>
 
         <!-- 7021端口 -->
-        <!--<task:scheduled ref="segmenteJob" method="segmentDocs4Cache4" cron="45 15,35,55 * * * ?"/>-->
+        <task:scheduled ref="segmenteJob" method="segmentDocs4Cache4" cron="0 15,35,55 * * * ?"/>
         <!-- ***************************************** 分词定时任务 ***************************************** -->
 
 

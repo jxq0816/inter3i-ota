@@ -29,7 +29,11 @@ public class CommonData extends Entity {
     public static final int SEGMENTE_SATUS_EXCEPTION = 3;
     public static final int SEGMENTE_SATUS_OUT_SIZE = 4;
 
+    private String jsonDocStr;
+
     private Map jsonDoc;
+
+    private Map dataSmryInfo;
 
     private int importStatus;
 

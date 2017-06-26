@@ -67,6 +67,10 @@ public class CommonDataService implements ICommonDataService {
         mogoDbBean.put("segmentedStatus", commonData.getImportStatus());
         mogoDbBean.put("cacheDataTime", commonData.getCacheDataTime());
         mogoDbBean.put("jsonDoc", commonData.getJsonDoc());
+        mogoDbBean.put("dataSmryInfo", commonData.getDataSmryInfo());
+        //  ceshi
+        mogoDbBean.put("jsonDocStr", commonData.getJsonDocStr());
+        //
         return mogoDbBean;
     }
 }

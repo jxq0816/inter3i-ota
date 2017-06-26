@@ -11,7 +11,7 @@
 
 package com.inter3i.sun.api.ota.v1.util;
 
-import com.inter3i.sun.api.ota.v1.config.ImportDataConfig;
+import com.inter3i.sun.api.ota.v1.config.CollectionManage;
 import com.inter3i.sun.api.ota.v1.config.SegmentFieldsConfig;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -61,7 +61,7 @@ public class NLPDataFormater {
             nlpReq.put("content_type", josn.getInt("content_type"));
         }
 
-        nlpReq.put("dicttype", ImportDataConfig.TOKENIZE_DICTTYPE_ALL);
+        nlpReq.put("dicttype", CollectionManage.TOKENIZE_DICTTYPE_ALL);
         nlpReq.put("dictionary_plan", dictPlan);
 
         String content = null;
@@ -73,7 +73,7 @@ public class NLPDataFormater {
         nlpReq.put("content", content);
 
         // 非原创的文章 需要原创文章中的情感信息
-        if ((!josn.isNull("content_type") && josn.getInt("content_type") != 0) && !ValidateUtils.isNullOrEmpt(josn, "analysis_status") && josn.getInt("analysis_status") == ImportDataConfig.ANALYSIS_STATUS_NORMAL) {
+        if ((!josn.isNull("content_type") && josn.getInt("content_type") != 0) && !ValidateUtils.isNullOrEmpt(josn, "analysis_status") && josn.getInt("analysis_status") == CollectionManage.ANALYSIS_STATUS_NORMAL) {
             nlpReq.put("dependorig", 1);
 
             //TODO 需要在这里设置原创的情感信息
@@ -140,7 +140,7 @@ public class NLPDataFormater {
                 nlpReq.put("'sourceid'", josn.getString("sourceid"));
             }
 
-            nlpReq.put("dicttype", ImportDataConfig.TOKENIZE_DICTTYPE_NOEB);
+            nlpReq.put("dicttype", CollectionManage.TOKENIZE_DICTTYPE_NOEB);
             nlpReq.put("dictionary_plan", dictPlan);
             nlpReq.put("dependorig", 0);
             nlpReq.put("originfo", "");

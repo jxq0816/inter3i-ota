@@ -11,6 +11,7 @@
 
 package com.inter3i.sun.api.ota.v1.controller.dataimport.travel;
 
+import com.alibaba.fastjson.JSON;
 import com.inter3i.sun.api.ota.v1.config.CollectionManage;
 import com.inter3i.sun.api.ota.v1.config.MongoDBServerConfig;
 import com.inter3i.sun.api.ota.v1.config.StoreDataConfig;
@@ -27,6 +28,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 @RestController("/DocCache")
 @RequestMapping("/DocCache")
@@ -108,9 +111,29 @@ public class CommonDataController {
 
             Document doc = Document.parse(requestDataStr);
             ArrayList DocDatas = (ArrayList) doc.get("datas");
+
+            String column = null;
+            String column1 = null;
+            String page_url = null;
+
             //非空校验
             for (int i1 = 0; i1 < DocDatas.size(); i1++) {
                 Document DocData = (Document) DocDatas.get(i1);
+                if(ValidateUtils.isNullOrEmpt(column)){
+                    if(DocData.containsKey("column") && !ValidateUtils.isNullOrEmpt(DocData.get("column"))){
+                        column = (String) DocData.get("column");
+                    }
+                }
+                if(ValidateUtils.isNullOrEmpt(column1)){
+                    if(DocData.containsKey("column1") && !ValidateUtils.isNullOrEmpt(DocData.get("column1"))){
+                        column1 = (String) DocData.get("column1");
+                    }
+                }
+                if(ValidateUtils.isNullOrEmpt(page_url)){
+                    if(DocData.containsKey("page_url") && !ValidateUtils.isNullOrEmpt(DocData.get("page_url"))){
+                        page_url = (String) DocData.get("page_url");
+                    }
+                }
                 for (int i = 0; i < CHECK_FIELDS.length; i++) {
                     if (ValidateUtils.isNullOrEmpt(DocData.get(CHECK_FIELDS[i]))) {
                         logger.error("Import document from datasource:["+dataSourceName+"] exception: the field [ " + CHECK_FIELDS[i] + " ] is null.");
@@ -118,13 +141,23 @@ public class CommonDataController {
                     }
                 }
             }
+            Map<String, String> dataSmryInfo = new HashMap<>();
+            dataSmryInfo.put("column", column);
+            dataSmryInfo.put("column1", column1);
+            dataSmryInfo.put("page_url", page_url);
+            String s = JSON.toJSONString(dataSmryInfo);
+            Document docDataSmryInfo = Document.parse(s);
+
 
             CommonData commonData = new CommonData();
             commonData.setImportStatus(CommonData.IMPORTSTATUS_NO_IMPORT);
             commonData.setSegmentedStatus(CommonData.SEGMENTE_SATUS_NO);
             commonData.setCacheDataTime(System.currentTimeMillis());
             commonData.setJsonDoc(doc);
-
+            commonData.setDataSmryInfo(docDataSmryInfo);
+            //  ceshi
+            commonData.setJsonDocStr(requestDataStr);
+            //
             if (OPERATE_TYPE_INSERT.equals(type)) {
                 commonDataService.savaCommonData(cacheServerName, commonData, serverConfig,storeDataConfig);
             } else {
