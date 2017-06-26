@@ -155,9 +155,7 @@ public class CommonDataController {
             commonData.setCacheDataTime(System.currentTimeMillis());
             commonData.setJsonDoc(doc);
             commonData.setDataSmryInfo(docDataSmryInfo);
-            //  ceshi
-            commonData.setJsonDocStr(requestDataStr);
-            //
+
             if (OPERATE_TYPE_INSERT.equals(type)) {
                 commonDataService.savaCommonData(cacheServerName, commonData, serverConfig,storeDataConfig);
             } else {
