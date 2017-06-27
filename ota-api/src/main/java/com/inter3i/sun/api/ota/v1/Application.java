@@ -11,6 +11,7 @@ package com.inter3i.sun.api.ota.v1;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.data.mongo.MongoDataAutoConfiguration;
 import org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration;
 import org.springframework.boot.builder.SpringApplicationBuilder;
@@ -24,6 +25,7 @@ import org.springframework.context.annotation.ImportResource;
 @ComponentScan
 @EnableAutoConfiguration(exclude = {MongoAutoConfiguration.class, MongoDataAutoConfiguration.class})
 @EnableConfigurationProperties
+@SpringBootApplication
 @ImportResource("classpath:dispatcher-servlet.xml")
 public class Application extends SpringBootServletInitializer implements EmbeddedServletContainerCustomizer {
 
