@@ -37,7 +37,7 @@
     <task:scheduled-tasks scheduler="sgScheduler">
         <!-- ***************************************** 数据入库定时任务 ***************************************** -->
         <!-- 8081端口 -->
-        <task:scheduled ref="importJob" method="importDoc2SolrFromCache1" cron="0 0 */3 * * ?"/>
+        <task:scheduled ref="importJob" method="importDoc2SolrFromCache1" cron="1 * * * * ?"/>
        <!-- <task:scheduled ref="importJob" method="importDoc2SolrFromCache1" cron="1 * * * * ?"/>-->
 
         <!-- 8071端口  -->
@@ -58,7 +58,7 @@
         <!--***************************************** 分词定时任务 *****************************************-->
         <!--8081端口-->
         <!--<task:scheduled ref="segmenteJob" method="segmentDocs4Cache1" cron="1 * * * * ?"/>-->
-        <task:scheduled ref="segmenteJob" method="segmentDocs4Cache1" cron="0 0,20,40 * * * ?"/>
+        <task:scheduled ref="segmenteJob" method="segmentDocs4Cache1" cron="1 * * * * ?"/>
 
         <!-- 8071端口 -->
         <task:scheduled ref="segmenteJob" method="segmentDocs4Cache2" cron="0 5,25,45 * * * ?"/>
