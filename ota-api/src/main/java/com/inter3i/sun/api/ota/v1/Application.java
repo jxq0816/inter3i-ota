@@ -20,14 +20,14 @@ import org.springframework.boot.context.embedded.EmbeddedServletContainerCustomi
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.web.support.SpringBootServletInitializer;
 import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.ImportResource;
 
 @ComponentScan
 @EnableAutoConfiguration(exclude = {MongoAutoConfiguration.class, MongoDataAutoConfiguration.class})
 @EnableConfigurationProperties
-@SpringBootApplication
-@ImportResource("classpath:dispatcher-servlet.xml")
-public class Application extends SpringBootServletInitializer implements EmbeddedServletContainerCustomizer {
+@SpringBootApplication(exclude = MongoAutoConfiguration.class)
+//在部署到外部的Tomcat时，需要将classpath的引入文件去掉，因为在web.xml已经配置过一次了
+/*@ImportResource("classpath:dispatcher-servlet.xml")*/
+public class Application extends SpringBootServletInitializer implements EmbeddedServletContainerCustomizer{
 
     private static final String CONTEXT_PATH = "/otaapi";
    /* @Override
