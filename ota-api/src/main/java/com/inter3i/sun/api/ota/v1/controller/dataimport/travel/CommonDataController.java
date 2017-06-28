@@ -105,7 +105,7 @@ public class CommonDataController {
         JSONObject responseData = new JSONObject();
         try {
             responseData.put("success", true);
-            logger.debug("Import common document from datasource:["+dataSourceName+"] for Cache:" + cacheServerName + "] requestDoc: " + requestDataStr);
+            logger.debug("Import common document from datasource:["+dataSourceName+"] for Cache:" + cacheServerName + "] ");
             //校验当前的缓存是否合法 PHP端不能随意指定cacheName,指定的cacheName必须在配置文件中进行配置
             serverConfig.validateCacheName(cacheServerName);
 
@@ -136,8 +136,8 @@ public class CommonDataController {
                 }
                 for (int i = 0; i < CHECK_FIELDS.length; i++) {
                     if (ValidateUtils.isNullOrEmpt(DocData.get(CHECK_FIELDS[i]))) {
-                        logger.error("Import document from datasource:["+dataSourceName+"] exception: the field [ " + CHECK_FIELDS[i] + " ] is null.");
-                        throw new RuntimeException(" Import document from datasource:["+dataSourceName+"] exception: the field [" + CHECK_FIELDS[i] + " ] is null.");
+                        logger.error("Import document from datasource:["+dataSourceName+"] exception: the field [ " + CHECK_FIELDS[i] + " ] is null. the column is:[ "+ column +" ],the column1 is:[ " +column1+" ],the page_url is:[ "+ page_url +" ]");
+                        throw new RuntimeException(" Import document from datasource:["+dataSourceName+"] exception: the field [" + CHECK_FIELDS[i] + " ] is null.the column is:[ "+ column +" ],the column1 is:[ " +column1+" ],the page_url is:[ "+ page_url +" ]");
                     }
                 }
             }
@@ -161,7 +161,7 @@ public class CommonDataController {
             } else {
                 throw new NonSupportException("unsupported type:[" + type + "] for controller:[CommonDataController]");
             }
-            logger.info("Import common from datasource:["+dataSourceName+"] document success.");
+            logger.info("Import common from datasource:["+dataSourceName+"] document success.the cacheName is:[ "+ cacheServerName+"]");
         } catch (Exception e) {
             logger.error("Import common document from datasource:["+dataSourceName+"] exception:[" + e.getMessage() + "].", e);
             responseData.put("success", false);

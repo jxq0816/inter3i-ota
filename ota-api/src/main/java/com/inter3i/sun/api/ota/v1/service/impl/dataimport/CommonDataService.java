@@ -34,22 +34,21 @@ public class CommonDataService implements ICommonDataService {
             logger.warn("--+-savaCommonData into mongoDB failed,Data is null.");
             return;
         }
-        logger.info("--+-savaCommonData into mongoDB ...");
+
         long starTime = System.currentTimeMillis();
         String dataSourceName=storeDataConfig.getDataTableORSourceName(cacheName,StoreDataConfig.DSNAME);
 
         DatasourceConfig dataSourceConfig=DatasourceConfig.getConfigByDataSourceName(dataSourceName);
         String dbName=dataSourceConfig.getDbName();
-
-
         String tableName=storeDataConfig.getDataTableORSourceName(cacheName,StoreDataConfig.TABLENAME);
 
+        logger.info("--+-savaCommonData into mongoDB... ");
         MongoCollection dbCollection = RepositoryFactory.getMongoClient(dbName,tableName,dataSourceConfig.getMongoDBIp(), dataSourceConfig.getMongoDBPort());
         Document mogoDbBean = converBean2Doc(commonData);
         dbCollection.insertOne(mogoDbBean);
         long endTime = System.currentTimeMillis();
         //TimeStatisticUtil.getTimeInof(serverConfig.getDataImportUrl(ImportDataConfig.CACHE_NAME_01)).addTime(endTime - starTime);
-        logger.info("--+-savaCommonData into mongoDB complete,data:[" + commonData + "]. Spend:[" + (endTime - starTime) + "]ms.");
+        logger.info("--+-savaCommonData into mongoDB complete,data:[" + commonData + "]. Spend:[" + (endTime - starTime) + "]ms.,the cacheName is:[ " +cacheName+" ],the dbName is:[ "+dbName+" ],the tableName is:[ "+tableName+" ]");
     }
 
     /*private DBObject converBean2MongoObj(CommonData commonData) {
