@@ -4,7 +4,7 @@ import org.junit.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
- * Created by boxiaotong on 2017/6/7.
+ * Created by jiangxingqi on 2017/6/7.
  */
 public class TaskScheduledServiceTest {
     @Test
