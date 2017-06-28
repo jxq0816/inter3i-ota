@@ -24,7 +24,7 @@ import org.springframework.context.annotation.ComponentScan;
 @ComponentScan
 @EnableAutoConfiguration(exclude = {MongoAutoConfiguration.class, MongoDataAutoConfiguration.class})
 @EnableConfigurationProperties
-@SpringBootApplication(exclude = MongoAutoConfiguration.class)
+@SpringBootApplication
 //在部署到外部的Tomcat时，需要将classpath的引入文件去掉，因为在web.xml已经配置过一次了
 /*@ImportResource("classpath:dispatcher-servlet.xml")*/
 public class Application extends SpringBootServletInitializer implements EmbeddedServletContainerCustomizer{
