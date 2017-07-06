@@ -48,7 +48,7 @@ public class CommonDataService implements ICommonDataService {
         dbCollection.insertOne(mogoDbBean);
         long endTime = System.currentTimeMillis();
         //TimeStatisticUtil.getTimeInof(serverConfig.getDataImportUrl(ImportDataConfig.CACHE_NAME_01)).addTime(endTime - starTime);
-        logger.info("--+-savaCommonData into mongoDB complete,data:[" + commonData + "]. Spend:[" + (endTime - starTime) + "]ms.,the cacheName is:[ " +cacheName+" ],the dbName is:[ "+dbName+" ],the tableName is:[ "+tableName+" ]");
+        logger.info("--+-savaCommonData into mongoDB complete,dataSourceName:["+ dataSourceName +"].data:[" + commonData + "]. Spend:[" + (endTime - starTime) + "]ms.,the cacheName is:[ " +cacheName+" ],the dbName is:[ "+dbName+" ],the tableName is:[ "+tableName+" ]");
     }
 
     /*private DBObject converBean2MongoObj(CommonData commonData) {

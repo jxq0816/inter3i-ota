@@ -40,8 +40,6 @@ public class CommonDataController {
 
     private static final String OPERATE_TYPE_INSERT = "insert";
 
-    private final String dataSourceName="ds_import";
-
     private final ICommonDataService commonDataService;
     //需要校验非空的字段
     final static String CHECK_FIELDS[] = new String[]{"column", "column1", "page_url", "original_url", "floor"};
@@ -103,6 +101,7 @@ public class CommonDataController {
 //        private String errorCode;
 //        private String errorMsg;
         JSONObject responseData = new JSONObject();
+        String dataSourceName=storeDataConfig.getDataTableORSourceName(cacheServerName,StoreDataConfig.DSNAME);
         try {
             responseData.put("success", true);
             logger.debug("Import common document from datasource:["+dataSourceName+"] for Cache:" + cacheServerName + "] ");
