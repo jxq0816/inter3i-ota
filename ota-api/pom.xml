@@ -15,20 +15,20 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
 
-            <!-- 打war包时，需要移除嵌入式tomcat插件 -->
+           <!-- &lt;!&ndash; 打war包时，需要移除嵌入式tomcat插件 &ndash;&gt;
             <exclusions>
                 <exclusion>
                     <groupId>org.springframework.boot</groupId>
                     <artifactId>spring-boot-starter-tomcat</artifactId>
                 </exclusion>
-            </exclusions>
+            </exclusions>-->
         </dependency>
         <!-- 打war包时，需要使用自定义Tomcat -->
-        <dependency>
+       <!-- <dependency>
             <groupId>org.apache.tomcat</groupId>
             <artifactId>tomcat-servlet-api</artifactId>
             <version>8.0.36</version>
-        </dependency>
+        </dependency>-->
 
         <dependency> <!-- exclude掉spring-boot的默认log配置 -->
             <groupId>org.springframework.boot</groupId>
