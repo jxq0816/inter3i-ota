@@ -21,7 +21,7 @@ public class TaskScheduledController {
     private TaskScheduledService taskScheduledService;
 
     @ResponseBody
-    @RequestMapping(value = {"insert",""})
+    @RequestMapping("insert")
     public String insert(String jobType,String cacheName) {
         String rs=taskScheduledService.insert(jobType,cacheName);
         return rs;
