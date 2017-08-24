@@ -16,6 +16,7 @@ import org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration;
 import org.springframework.context.annotation.ComponentScan;
 
 @ComponentScan
+//部署到Tomcat服务器时，禁用mongo默认配置
 @SpringBootApplication(exclude = {MongoAutoConfiguration.class,MongoDataAutoConfiguration.class})
 //在部署到外部的Tomcat时，需要将classpath的引入文件去掉，因为在web.xml已经配置过一次了
 //@ImportResource("classpath:dispatcher-servlet.xml")
