@@ -3,7 +3,7 @@
     <Properties>
         <Property name="patternLayout">[%d{yyyy-MM-dd'T'HH:mm:ss,SSSXXX}] %-5p [%t] %c{2} - %m%n]</Property>
         <!--<Property name="logdir">${sys:catalina.home}</Property>-->
-        <Property name="logdir">D:/tmp</Property>
+        <Property name="logdir">logdir</Property>
         <!--<Property name="logdir">/usr/local/apache-tomcat-8.0.30/logs</Property>-->
         <!--<Property name="logdir">/data/tomcat8/logs</Property>-->
     </Properties>
